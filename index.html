@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="card">
+        <h1>Quản lý việc cần làm</h1>
+        <p>Ghi chú công việc của bạn và theo dõi tiến trình.</p>
+
+        <form id="task-form">
+          <input id="task-input" type="text" placeholder="Nhập việc cần làm..." required />
+          <button type="submit">Thêm</button>
+        </form>
+
+        <ul id="task-list"></ul>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
