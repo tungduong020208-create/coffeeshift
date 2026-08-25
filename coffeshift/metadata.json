@@ -1,0 +1,6 @@
+{
+  "name": "CoffeeShift",
+  "description": "Smart café shift management, barista time-tracking, schedule roster, and checklist system.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
