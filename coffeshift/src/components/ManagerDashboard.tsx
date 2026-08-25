@@ -463,6 +463,7 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
                     <span className="text-[#ff8f00]">{shift.startTime} - {shift.endTime}</span>
                   </div>
                   <p className="text-[#504442]">Trạm: <strong>{shift.station}</strong></p>
+                  <span className={"text-xs font-bold " + (shift.duration === 5 ? "text-blue-600" : "text-emerald-600")}>Ca {shift.duration}h</span>
                   {shift.notes && (
                     <p className="text-[10px] text-[#827472] italic truncate">📝 {shift.notes}</p>
                   )}

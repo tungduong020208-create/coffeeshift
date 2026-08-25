@@ -98,8 +98,8 @@ export const INITIAL_SHIFTS: Shift[] = [
     endTime: '22:00',
     type: 'closing',
     station: 'Espresso Bar 1',
-    status: 'checked_in',
-    checkInTime: '12:55',
+    status: 'upcoming',
+    duration: 8,
     notes: 'Phụ trách cân chỉnh máy xay Mahlkönig E65S & Slayer Espresso sáng nay.',
   },
   {
@@ -116,6 +116,7 @@ export const INITIAL_SHIFTS: Shift[] = [
     station: 'POS & Cashier',
     status: 'checked_in',
     checkInTime: '06:28',
+    duration: 8,
     notes: 'Kiểm tiền két đầu ca 2,000,000đ & kích hoạt máy in bill.',
   },
   {
@@ -127,10 +128,11 @@ export const INITIAL_SHIFTS: Shift[] = [
     role: 'employee',
     date: getFormattedDate(0),
     startTime: '11:00',
-    endTime: '19:00',
+    endTime: '16:00',
     type: 'mid',
     station: 'Pour Over & Cold Brew',
     status: 'upcoming',
+    duration: 5,
     notes: 'Ủ 15 lít Cold Brew Nitro vụ mới Ethiopia Yirgacheffe.',
   },
   {
@@ -141,11 +143,12 @@ export const INITIAL_SHIFTS: Shift[] = [
     userPosition: 'Junior Barista',
     role: 'employee',
     date: getFormattedDate(0),
-    startTime: '14:30',
-    endTime: '22:30',
+    startTime: '16:00',
+    endTime: '21:00',
     type: 'closing',
     station: 'Floor & Service',
     status: 'upcoming',
+    duration: 5,
     notes: 'Hỗ trợ dọn trạm pha, vệ sinh máy xay và kiểm tra tủ lạnh ca tối.',
   },
   {
@@ -157,11 +160,12 @@ export const INITIAL_SHIFTS: Shift[] = [
     role: 'manager',
     date: getFormattedDate(0),
     startTime: '08:00',
-    endTime: '17:00',
+    endTime: '16:00',
     type: 'mid',
     station: 'Shift Supervisor',
     status: 'checked_in',
     checkInTime: '07:50',
+    duration: 8,
     notes: 'Giám sát vận hành giờ cao điểm & nhận đơn hạt mộc từ xưởng rang.',
   },
 
@@ -179,6 +183,7 @@ export const INITIAL_SHIFTS: Shift[] = [
     type: 'closing',
     station: 'Espresso Bar 1',
     status: 'upcoming',
+    duration: 8,
     notes: 'Quy trình Backflush bột Cafiza máy pha & kiểm kê tồn hạt cà phê.',
   },
   {
@@ -194,6 +199,7 @@ export const INITIAL_SHIFTS: Shift[] = [
     type: 'morning',
     station: 'POS & Cashier',
     status: 'upcoming',
+    duration: 8,
   },
   {
     id: 'shift-tomorrow-nam',
@@ -208,6 +214,7 @@ export const INITIAL_SHIFTS: Shift[] = [
     type: 'morning',
     station: 'Espresso Bar 2',
     status: 'upcoming',
+    duration: 8,
   },
 
   // Day +2
@@ -224,6 +231,7 @@ export const INITIAL_SHIFTS: Shift[] = [
     type: 'morning',
     station: 'Espresso Bar 1',
     status: 'swap_requested',
+    duration: 5,
     notes: 'Đang gửi yêu cầu đổi sang ca tối để tham gia workshop SCA.',
   },
   {
@@ -239,6 +247,7 @@ export const INITIAL_SHIFTS: Shift[] = [
     type: 'closing',
     station: 'Pour Over & Cold Brew',
     status: 'upcoming',
+    duration: 8,
   },
 
   // Day +3
@@ -255,6 +264,7 @@ export const INITIAL_SHIFTS: Shift[] = [
     type: 'mid',
     station: 'Kitchen & Bakery',
     status: 'upcoming',
+    duration: 5,
   },
   // Day -1 (Yesterday completed)
   {
@@ -272,6 +282,7 @@ export const INITIAL_SHIFTS: Shift[] = [
     status: 'completed',
     checkInTime: '06:22',
     checkOutTime: '14:35',
+    duration: 8,
     notes: 'Pha 184 shot espresso, hoàn tất kiểm kê sữa hạt.',
   }
 ];

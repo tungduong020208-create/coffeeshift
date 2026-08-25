@@ -96,26 +96,7 @@ export const ClockInModal: React.FC<ClockInModalProps> = ({
 
           {!isClockingOut ? (
             <>
-              {/* Station Selection */}
-              <div>
-                <label className="block font-semibold text-[#271310] text-xs mb-1.5">
-                  Vị trí phụ trách hôm nay:
-                </label>
-                <select
-                  value={station}
-                  onChange={(e) => setStation(e.target.value as any)}
-                  className="w-full h-11 px-3 rounded-lg border border-[#d3c3c0] bg-white text-xs text-[#1b1c1c] focus:border-[#ff8f00] outline-none"
-                >
-                  <option value="Espresso Bar 1">Espresso Bar 1 (Máy Slayer EP / Mahlkönig)</option>
-                  <option value="Espresso Bar 2">Espresso Bar 2 (La Marzocco / Milk Steaming)</option>
-                  <option value="Pour Over & Cold Brew">Trạm pha thủ công V60 & Cold Brew Nitro</option>
-                  <option value="POS & Cashier">Thu ngân & Tiếp đón khách hàng</option>
-                  <option value="Kitchen & Bakery">Bếp bánh & Chuẩn bị nguyên liệu</option>
-                  <option value="Floor & Service">Phục vụ sàn & Tiếp thực</option>
-                  <option value="Shift Supervisor">Điều phối & Giám sát ca</option>
-                </select>
-              </div>
-
+              
               {/* Pre-shift check */}
               <div className="space-y-2 pt-1">
                 <label className="flex items-center gap-2 cursor-pointer">

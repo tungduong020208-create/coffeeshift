@@ -165,11 +165,19 @@ export default function App() {
       )
     );
 
+    let workedHours = 8.0;
+    const currentShift = shifts.find(s => s.id === shiftId);
+    if (currentShift && currentShift.checkInTime) {
+      const inParts = currentShift.checkInTime.split(":");
+      const outParts = now.split(":");
+      const mins = (parseInt(outParts[0]) * 60 + parseInt(outParts[1])) - (parseInt(inParts[0]) * 60 + parseInt(inParts[1]));
+      workedHours = Math.max(0.5, Math.round(mins / 6 * 10) / 10);
+    }
     if (currentUser) {
       setUsers((prev) =>
         prev.map((u) =>
           u.id === currentUser.id
-            ? { ...u, hoursWorkedMonth: +(u.hoursWorkedMonth + 8.0).toFixed(1) }
+            ? { ...u, hoursWorkedMonth: +(u.hoursWorkedMonth + workedHours).toFixed(1) }
             : u
         )
       );
@@ -178,7 +186,7 @@ export default function App() {
     const newNotif: AppNotification = {
       id: `notif-${Date.now()}`,
       title: 'Đã hoàn thành ca làm',
-      message: `Bạn đã xác nhận rời ca lúc ${now}. 8.0 giờ làm việc đã được cộng vào bảng lương tháng.`,
+      message: `Bạn đã xác nhận rời ca lúc ${now}. ${workedHours} giờ làm việc đã được cộng vào bảng lương tháng.`,
       type: 'shift',
       timestamp: now,
       read: false,
@@ -421,7 +429,7 @@ export default function App() {
       status: 'pending_review',
     };
     setEvidence(prev => [newEv, ...prev]);
-    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, taskStatus: 'pending_review', evidenceUrl: url, evidenceNote: note } : t));
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, taskStatus: 'pending_review', evidenceUrl: url, evidenceNote: note, capturedAt: now } : t));
     showToast('✓ Đã nộp bằng chứng! Đang chờ quản lý duyệt.');
   };
 

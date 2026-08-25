@@ -1,5 +1,6 @@
 export type UserRole = 'employee' | 'manager';
 export type ShiftType = 'morning' | 'mid' | 'closing';
+export type ShiftDuration = 5 | 8;
 export type ShiftStatus = 'upcoming' | 'checked_in' | 'on_break' | 'completed' | 'swap_requested' | 'time_off';
 export type StationType = 'Espresso Bar 1' | 'Espresso Bar 2' | 'Pour Over & Cold Brew' | 'POS & Cashier' | 'Kitchen & Bakery' | 'Floor & Service' | 'Shift Supervisor';
 
@@ -33,6 +34,7 @@ export interface Shift {
   startTime: string;
   endTime: string;
   type: ShiftType;
+  duration: ShiftDuration;
   station: StationType;
   status: ShiftStatus;
   checkInTime?: string;
@@ -56,6 +58,7 @@ export interface TaskItem {
   taskStatus?: TaskStatus;
   evidenceUrl?: string;
   evidenceNote?: string;
+  capturedAt?: string;
   reviewedBy?: string;
   reviewedAt?: string;
 }

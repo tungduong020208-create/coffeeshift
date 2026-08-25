@@ -24,11 +24,13 @@ export const AddShiftModal: React.FC<AddShiftModalProps> = ({
   const [endTime, setEndTime] = useState('14:30');
   const [station, setStation] = useState<StationType>('Espresso Bar 1');
   const [notes, setNotes] = useState('');
+  const [duration, setDuration] = useState<5 | 8>(8);
 
   if (!isOpen) return null;
 
-  const handlePresetChange = (type: ShiftType) => {
+  const handlePresetChange = (type: ShiftType, dur: 5 | 8 = 8) => {
     setShiftPreset(type);
+    setDuration(dur);
     if (type === 'morning') {
       setStartTime('06:30');
       setEndTime('14:30');
@@ -58,6 +60,7 @@ export const AddShiftModal: React.FC<AddShiftModalProps> = ({
       type: shiftPreset,
       station,
       status: 'upcoming',
+      duration,
       notes: notes.trim() || undefined,
     });
     onClose();

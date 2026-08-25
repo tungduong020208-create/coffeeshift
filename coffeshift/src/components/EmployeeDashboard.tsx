@@ -85,11 +85,12 @@ export const EmployeeDashboard: React.FC<Props> = ({
                 <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#ff8f00]" />
                 <div className="flex items-start justify-between mb-3">
                   <div><h2 className="font-bold text-xl text-gray-900">{shiftLabel(todayShift.type)}</h2>
-                    <div className="flex items-center gap-1.5 mt-1"><span className="material-symbols-outlined text-gray-400 text-base">schedule</span><span className="text-sm text-gray-600">{todayShift.startTime} - {todayShift.endTime}</span></div></div>
+                    <div className="flex items-center gap-1.5 mt-1"><span className="material-symbols-outlined text-gray-400 text-base">schedule</span><span className="text-sm text-gray-600">{todayShift.startTime} - {todayShift.endTime}</span></div>{todayShift.checkInTime && (<div className="flex items-center gap-1.5 mt-1"><span className="material-symbols-outlined text-emerald-500 text-base">login</span><span className="text-xs text-emerald-600 font-medium">Vao ca: {todayShift.checkInTime}</span></div>)}{todayShift.checkOutTime && (<div className="flex items-center gap-1.5 mt-1"><span className="material-symbols-outlined text-red-500 text-base">logout</span><span className="text-xs text-red-600 font-medium">Ket ca: {todayShift.checkOutTime}</span></div>)}</div>
                   <span className="bg-[#f5f0e0] text-[#8f6a00] text-xs font-semibold px-3 py-1 rounded-full">{todayShift.status === 'checked_in' ? 'Dang dien ra' : todayShift.status === 'completed' ? 'Da hoan thanh' : 'Sap bat dau'}</span>
+                  <span className={"text-xs font-semibold px-2.5 py-1 rounded-full " + (todayShift.duration === 5 ? "bg-blue-100 text-blue-700" : "bg-emerald-100 text-emerald-700")}>{todayShift.duration}h</span>
                 </div>
                 <div className="mt-2"><div className="flex justify-between text-xs text-gray-500 mb-1"><span>Tien do ca lam</span><span className="font-semibold text-gray-700">{shiftPct}%</span></div>
-                  <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-[#ff8f00] rounded-full transition-all duration-500" style={{ width: shiftPct + '%' }} /></div></div>
+                  <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-[#ff8f00] rounded-full transition-all duration-500" style={{ width: shiftPct + '%' }} /></div>{todayShift.status === "checked_in" && todayShift.checkInTime && (<div className="flex items-center gap-1.5 mt-2"><span className="material-symbols-outlined text-blue-500 text-base">timer</span><span className="text-xs text-blue-600 font-medium">Da lam: {Math.floor(elapsed / 3600)}h {Math.floor((elapsed % 3600) / 60)}p {elapsed % 60}s</span></div>)}</div>
                 <div className="mt-4 flex gap-2">
                   {todayShift.status === 'upcoming' && <button type="button" onClick={() => setIsClockInOpen(true)} className="flex-1 py-2.5 bg-[#ff8f00] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 cursor-pointer"><span className="material-symbols-outlined text-base">login</span>Diem danh vao ca</button>}
                   {todayShift.status === 'checked_in' && <button type="button" onClick={() => setIsClockOutOpen(true)} className="flex-1 py-2.5 bg-red-500 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 cursor-pointer"><span className="material-symbols-outlined text-base">logout</span>Ket ca (Clock Out)</button>}
@@ -111,8 +112,8 @@ export const EmployeeDashboard: React.FC<Props> = ({
                       </div>
                       <div className="flex-1 min-w-0"><p className="font-semibold text-sm text-gray-900 truncate">{task.title}</p>
                         <div className="flex items-center gap-2 mt-0.5"><span className="text-xs text-gray-400 flex items-center gap-1"><span className="material-symbols-outlined text-sm">schedule</span>{task.scheduledTime}</span>
-                          <span className="text-xs font-medium" style={{ color: s.color }}>{s.label}</span></div></div>
-                      {task.taskStatus !== 'completed' && <button type="button" onClick={() => setSubmitEvidence(task.id)} className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer"><span className="material-symbols-outlined text-gray-400">camera_alt</span></button>}
+                          <span className="text-xs font-medium" style={{ color: s.color }}>{s.label}</span>{task.completedAt && (<span className="text-[10px] text-gray-400 flex items-center gap-1 mt-0.5"><span className="material-symbols-outlined text-[10px]">schedule</span>{task.completedAt}</span>)}{task.evidenceNote && (<span className="text-[10px] text-blue-500 flex items-center gap-1 mt-0.5"><span className="material-symbols-outlined text-[10px]">photo_camera</span>Da chup</span>)}{task.taskStatus === 'pending_review' && (<span className="text-[10px] text-blue-500 flex items-center gap-1 mt-0.5"><span className="material-symbols-outlined text-[10px]">pending</span>Cho duyet</span>)}</div></div>
+                      {task.taskStatus !== 'completed' && task.taskStatus !== 'pending_review' && (<button type="button" onClick={() => setSubmitEvidence(task.id)} className="p-2 rounded-lg hover:bg-orange-50 cursor-pointer border border-orange-200" title="Chup anh xac nhan"><span className="material-symbols-outlined text-[#ff8f00]">photo_camera</span></button>)}
                     </div>);
                 })}
               </div></div>
@@ -142,11 +143,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
                         <span className="text-xs font-medium" style={{ color: s.color }}>{s.label}</span>
                       </div>
                     </div>
-                    {task.taskStatus !== 'completed' && task.taskStatus !== 'pending_review' && (
-                      <button type="button" onClick={() => setSubmitEvidence(task.id)} className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
-                        <span className="material-symbols-outlined text-gray-400">camera_alt</span>
-                      </button>
-                    )}
+                    {task.taskStatus !== 'pending_review' && (<div className="flex items-center gap-1"><span className="material-symbols-outlined text-lg" style={{ color: task.taskStatus === 'completed' ? "#10b981" : "#ff8f00" }}>{task.taskStatus === 'completed' ? "check_circle" : "photo_camera"}</span></div>)}
                   </div>
                 );
               })}
