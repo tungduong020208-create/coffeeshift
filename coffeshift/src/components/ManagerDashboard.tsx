@@ -268,12 +268,12 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
         <div className="space-y-5">
           {/* 3-Shift Tracker */}
           <div className="bg-white rounded-2xl p-5 shadow-md border border-[#e5e2e1]">
-            <h3 className="font-['Montserrat'] font-bold text-lg text-[#271310] mb-4">Theo doi 3 Ca lam viec</h3>
+            <h3 className="font-['Montserrat'] font-bold text-lg text-[#271310] mb-4">Theo dõi 3 Ca làm việc</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
-                { label: 'Ca Sang', icon: 'wb_sunny', shifts: morningShift, color: '#ff8f00' },
-                { label: 'Ca Giua', icon: 'wb_twilight', shifts: midShift, color: '#d97706' },
-                { label: 'Ca Toi', icon: 'dark_mode', shifts: closingShift, color: '#271310' },
+                { label: 'Ca Sáng', icon: 'wb_sunny', shifts: morningShift, color: '#ff8f00' },
+                { label: 'Ca Trưa', icon: 'wb_twilight', shifts: midShift, color: '#d97706' },
+                { label: 'Ca Tối', icon: 'dark_mode', shifts: closingShift, color: '#271310' },
               ].map((sh) => {
                 const checkedIn = sh.shifts.filter(s => s.status === 'checked_in').length;
                 const total = sh.shifts.length;
@@ -284,8 +284,8 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
                       <span className="font-bold text-sm text-[#271310]">{sh.label}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[#827472]">Nhan vien:</span>
-                      <span className="font-mono font-bold text-[#271310]">{checkedIn}/{total} dang lam</span>
+                      <span className="text-[#827472]">Nhân viên:</span>
+                      <span className="font-mono font-bold text-[#271310]">{checkedIn}/{total} đang làm</span>
                     </div>
                     <div className="w-full h-2 bg-[#f0eded] rounded-full overflow-hidden">
                       <div className="h-full rounded-full" style={{ width: total > 0 ? Math.round(checkedIn/total*100)+'%' : '0%', backgroundColor: sh.color }} />
@@ -296,11 +296,11 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
                           <img src={s.userAvatar} alt={s.userName} className="w-6 h-6 rounded-full object-cover" />
                           <span className="flex-1 text-[#271310] font-medium">{s.userName}</span>
                           <span className={s.status === 'checked_in' ? 'text-emerald-600 font-bold' : s.status === 'completed' ? 'text-gray-500' : 'text-blue-600'}>
-                            {s.status === 'checked_in' ? 'Dang lam' : s.status === 'completed' ? 'Da xong' : 'Sap toi'}
+                            {s.status === 'checked_in' ? 'Đang làm' : s.status === 'completed' ? 'Đã xong' : 'Sắp tới'}
                           </span>
                         </div>
                       ))}
-                      {sh.shifts.length === 0 && <p className="text-[#827472] text-center py-2">Chua phan ca</p>}
+                      {sh.shifts.length === 0 && <p className="text-[#827472] text-center py-2">Chưa phân ca</p>}
                     </div>
                   </div>
                 );
@@ -310,8 +310,8 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
 
           {/* Leaderboard */}
           <div className="bg-white rounded-2xl p-5 shadow-md border border-[#e5e2e1]">
-            <h3 className="font-['Montserrat'] font-bold text-lg text-[#271310] mb-1">Bang xep hang thi dua</h3>
-            <p className="text-xs text-[#827472] mb-4">Xep hang theo diem thi dua - Cap nhat thuc te</p>
+            <h3 className="font-['Montserrat'] font-bold text-lg text-[#271310] mb-1">Bảng xếp hạng thi đua</h3>
+            <p className="text-xs text-[#827472] mb-4">Xếp hạng theo điểm thi đua - Cập nhật thực tế</p>
             <div className="space-y-3">
               {leaderboard.map((emp, i) => (
                 <div key={emp.id} className={`flex items-center gap-3 p-3 rounded-xl border ${i === 0 ? 'bg-amber-50/60 border-amber-300' : 'bg-[#fcf9f8] border-[#e5e2e1]'}`}>
@@ -325,7 +325,7 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
                   </div>
                   <div className="text-right">
                     <p className="font-mono font-bold text-lg text-[#ff8f00]">{emp.points || 0}</p>
-                    <p className="text-[9px] text-[#827472] uppercase">diem</p>
+                    <p className="text-[9px] text-[#827472] uppercase">điểm</p>
                   </div>
                 </div>
               ))}
@@ -339,12 +339,12 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
         <div className="bg-white rounded-2xl p-5 shadow-md border border-[#e5e2e1] space-y-5">
           <div className="pb-3 border-b border-[#e5e2e1]">
             <h3 className="font-['Montserrat'] font-bold text-lg text-[#271310]">
-              Duyet bang chung hoan thanh cong viec
+              Duyệt bằng chứng hoàn thành công việc
             </h3>
-            <p className="text-xs text-[#827472]">Xet duyet 1-click - Phe duyet de tich diem thi dua cho nhan vien</p>
+            <p className="text-xs text-[#827472]">Xet duyet 1-click - Phe duyet de tich điểm thi dua cho nhan vien</p>
           </div>
           {evidence.length === 0 ? (
-            <p className="text-center text-xs text-[#827472] py-8">Chua co bang chung nao duoc nop.</p>
+            <p className="text-center text-xs text-[#827472] py-8">Chưa có bằng chứng nào được nộp.</p>
           ) : (
             <div className="space-y-3">
               {evidence.map(ev => (
@@ -354,11 +354,11 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
                       <img src={ev.userAvatar} alt={ev.userName} className="w-10 h-10 rounded-full object-cover" />
                       <div>
                         <p className="font-bold text-sm text-[#271310]">{ev.userName}</p>
-                        <p className="text-[10px] text-[#827472]">Nop luc: {ev.submittedAt}</p>
+                        <p className="text-[10px] text-[#827472]">Nộp lúc: {ev.submittedAt}</p>
                       </div>
                     </div>
                     <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${ev.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : ev.status === 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800 animate-pulse'}`}>
-                      {ev.status === 'approved' ? '✓ Da duyet' : ev.status === 'rejected' ? '✕ Tu choi' : '⏳ Cho duyet'}
+                      {ev.status === 'approved' ? '✓ Đã duyệt' : ev.status === 'rejected' ? '✕ Từ chối' : '⏳ Cho duyet'}
                     </span>
                   </div>
                   <div className="bg-white p-3 rounded-lg border border-[#e5e2e1]">
@@ -367,10 +367,10 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
                   {ev.status === 'pending_review' && (
                     <div className="flex justify-end gap-2 pt-2 border-t border-[#e5e2e1]">
                       <button type="button" onClick={() => onRejectEvidence(ev.id)} className="px-4 py-2 border border-rose-300 text-rose-700 hover:bg-rose-50 font-semibold text-xs rounded-lg transition-colors cursor-pointer">
-                        Tu choi
+                        Từ chối
                       </button>
                       <button type="button" onClick={() => onApproveEvidence(ev.id)} className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-lg shadow-sm transition-colors cursor-pointer">
-                        ✓ Duyet & +10 diem
+                        ✓ Duyet & +10 điểm
                       </button>
                     </div>
                   )}
