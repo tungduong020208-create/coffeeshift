@@ -114,7 +114,7 @@ export default function App() {
     } else {
       const fallbackUser = users.find((u) => u.role === role) || users[0];
       setCurrentUserId(fallbackUser.id);
-      showToast(`Đăng nhập thành công với vai trò ${role === 'manager' ? 'Quản lý' : 'Barista'}!`);
+      showToast(`Đăng nhập thành công với vai trò ${role === 'manager' ? 'Quản lý' : 'Nhân viên'}!`);
     }
   };
 
@@ -127,11 +127,11 @@ export default function App() {
     const target = users.find((u) => u.id === userId);
     if (target) {
       setCurrentUserId(target.id);
-      showToast(`Đã chuyển sang tài khoản ${target.name} (${target.role === 'manager' ? 'Quản lý' : 'Barista'})`);
+      showToast(`Đã chuyển sang tài khoản ${target.name} (${target.role === 'manager' ? 'Quản lý' : 'Nhân viên'})`);
     }
   };
 
-  // Clock In handler
+  // Clock In handler (on-time = +5 points)
   const handleClockIn = (shiftId: string, station: string) => {
     const now = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     setShifts((prev) =>
@@ -151,7 +151,16 @@ export default function App() {
       read: false,
     };
     setNotifications((prev) => [newNotif, ...prev]);
-    showToast(`✓ Đã Clock In vào ca lúc ${now} tại ${station}! ☕`);
+    // On-time bonus: +5
+    const curShift = shifts.find(s => s.id === shiftId);
+    let pts = 5, ptMsg = 'Điểm danh đúng giờ! +5 điểm thi đua';
+    if (curShift?.startTime) {
+      const [cH, cM] = now.split(':').map(Number);
+      const [sH, sM] = curShift.startTime.split(':').map(Number);
+      if (cH * 60 + cM > sH * 60 + sM + 10) { pts = -5; ptMsg = 'Điểm danh trễ! -5 điểm'; }
+    }
+    if (currentUser) setUsers(p => p.map(u => u.id === currentUser.id ? { ...u, points: (u.points||0) + pts } : u));
+    showToast(`✓ Đã Clock In vào ca lúc ${now} tại ${station}! ☕ ${ptMsg}`);
   };
 
   // Clock Out handler
@@ -222,7 +231,7 @@ export default function App() {
         return {
           ...t,
           completed: nextState,
-          completedBy: nextState ? (currentUser?.name || 'Barista') : undefined,
+          completedBy: nextState ? (currentUser?.name || 'Nhân viên') : undefined,
           completedAt: nextState ? now : undefined,
         };
       })
@@ -441,9 +450,9 @@ export default function App() {
     const ev = evidence.find(e => e.id === evId);
     if (ev) {
       setTasks(prev => prev.map(t => t.id === ev.taskId ? { ...t, taskStatus: 'completed', completed: true, completedBy: ev.userName, completedAt: now } : t));
-      setUsers(prev => prev.map(u => u.id === ev.userId ? { ...u, points: (u.points || 0) + 10 } : u));
+      // Points only from on-time check-in
     }
-    showToast('✓ Đã duyệt bằng chứng! +10 điểm thi đua đã cộng cho nhân viên.');
+    showToast('✓ Đã duyệt bằng chứng! Đã duyệt bằng chứng.');
   };
 
   // Manager rejects evidence
@@ -568,6 +577,8 @@ export default function App() {
                 swaps={swaps}
                 announcements={announcements}
                 allUsers={users}
+                evidence={evidence}
+                handovers={handovers}
                 onToggleTask={handleToggleTask}
                 onAddTask={handleAddTask}
                 onClockIn={handleClockIn}
@@ -604,7 +615,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="font-['Montserrat'] font-bold text-[#271310]">CoffeeShift</span>
-            <span>• Hệ thống phân ca & quản lý Barista thông minh</span>
+            <span>• Hệ thống phân ca & quản lý nhân viên thông minh</span>
           </div>
           <p className="text-[11px]">
             Chế độ đang dùng: <strong>{currentUser.role === 'manager' ? 'Quản lý cửa hàng (Manager)' : 'Nhân viên pha chế (Employee)'}</strong> ({currentUser.name})

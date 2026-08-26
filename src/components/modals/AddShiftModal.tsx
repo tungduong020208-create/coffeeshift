@@ -97,10 +97,10 @@ export const AddShiftModal: React.FC<AddShiftModalProps> = ({
         {/* Form */}
         <form onSubmit={handleSubmit} className="py-4 space-y-3.5 text-xs font-['Inter'] text-[#504442]">
           
-          {/* Select Barista */}
+          {/* Select Employee */}
           <div>
             <label className="block font-semibold text-[#271310] mb-1">
-              Nhân viên barista:
+              Nhân viên:
             </label>
             <select
               value={userId}

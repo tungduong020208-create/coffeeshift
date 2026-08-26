@@ -405,7 +405,7 @@ export const INITIAL_ANNOUNCEMENTS: StoreAnnouncement[] = [
     authorRole: 'Store Manager',
     authorAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
     title: '☕ Hạt mới về: Ethiopia Guji Natural & Panama Geisha',
-    content: 'Xưởng rang vừa chuyển lô hạt mới tinh tuyển. Đề nghị các Barista ca sáng tiến hành cupping thử nếm và dial-in công thức pour-over chuẩn 1:15 trước khi phục vụ khách hàng.',
+    content: 'Xưởng rang vừa chuyển lô hạt mới tinh tuyển. Đề nghị các nhân viên ca sáng tiến hành cupping thử nếm và dial-in công thức pour-over chuẩn 1:15 trước khi phục vụ khách hàng.',
     badge: 'Sản phẩm mới',
     timestamp: 'Hôm nay, 06:10',
     isPinned: true,
@@ -500,5 +500,6 @@ export const INITIAL_HANDOVERS: ShiftHandover[] = [
     createdAt: '14:20',
     status: 'pending',
   },
+,  {    id: 'ho-2',    shiftId: 'shift-today-alex',    fromUserId: 'emp-1',    fromUserName: 'Alex Minh',    toUserId: 'emp-4',    toUserName: 'Hoàng Nam',    shiftType: 'closing',    date: '2026-08-26',    ingredients: [      { name: 'Hạt cà phê Ethiopia', status: 'enough', note: 'Còn 2kg' },      { name: 'Sữa tươi', status: 'low', note: 'Còn 1 hộp, cần bổ sung' },      { name: 'Đá viên', status: 'enough' },    ],    machines: [      { name: 'Máy pha Slayer', status: 'working' },      { name: 'Máy xay Mahlkönig E65S', status: 'needs_cleaning', note: 'Cần backflush sau ca' },    ],    notes: 'Ca tối đông khách giờ 19-21h. Bean blend espresso còn 1.5kg.',    createdAt: '22:25',    status: 'pending',  }
 ];
 

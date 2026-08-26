@@ -140,7 +140,7 @@ export const SwapShiftModal: React.FC<SwapShiftModalProps> = ({
                 required={swapMode === 'peer'}
                 className="w-full h-11 px-3 rounded-lg border border-[#d3c3c0] bg-white text-xs text-[#1b1c1c] focus:border-[#ff8f00] outline-none"
               >
-                <option value="">-- Chọn đồng nghiệp barista --</option>
+                <option value="">-- Chọn đồng nghiệp --</option>
                 {eligiblePeers.map((peer) => (
                   <option key={peer.id} value={peer.id}>
                     ☕ {peer.name} ({peer.position})

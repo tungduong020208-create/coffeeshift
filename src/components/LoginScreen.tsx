@@ -56,7 +56,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           className="px-2.5 py-1 rounded-full bg-[#3e2723] hover:bg-[#ff8f00] hover:text-[#271310] text-[#e4e4cc] transition-colors flex items-center gap-1 border border-[#e4e4cc]/20 cursor-pointer"
         >
           <span>☕</span>
-          <span>Alex Minh (Barista)</span>
+          <span>Alex Minh (Nhân viên)</span>
         </button>
         <button
           type="button"

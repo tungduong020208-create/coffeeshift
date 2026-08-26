@@ -52,7 +52,7 @@ export const NewAnnouncementModal: React.FC<NewAnnouncementModalProps> = ({
                 Đăng thông báo cửa hàng
               </h3>
               <p className="text-xs text-[#827472] font-['Inter']">
-                Gửi thông điệp tức thì đến toàn bộ barista
+                Gửi thông điệp tức thì đến tất cả nhân viên
               </p>
             </div>
           </div>

@@ -1,9 +1,12 @@
+import { Leaderboard } from './Leaderboard';
 import React, { useState, useEffect } from 'react';
 import { UserProfile, Shift, TaskItem, ShiftSwapRequest, StoreAnnouncement, TaskStatus, TASK_STATUS_CONFIG } from '../types';
+import { SalaryModal } from './modals/SalaryModal';
+import { CustomerReviewModal } from './modals/CustomerReviewModal';
 import { ClockInModal } from './modals/ClockInModal';
 import { SwapShiftModal } from './modals/SwapShiftModal';
 
-type NavTab = 'dashboard' | 'tasks' | 'evidence' | 'handover' | 'profile';
+type NavTab = 'dashboard' | 'tasks' | 'evidence' | 'handover' | 'leaderboard' | 'profile';
 
 interface Props {
   user: UserProfile; shifts: Shift[]; tasks: TaskItem[]; swaps: ShiftSwapRequest[];
@@ -26,6 +29,17 @@ export const EmployeeDashboard: React.FC<Props> = ({
   const [isClockInOpen, setIsClockInOpen] = useState(false);
   const [isClockOutOpen, setIsClockOutOpen] = useState(false);
   const [isSwapOpen, setIsSwapOpen] = useState(false);
+  const [isSalaryOpen, setIsSalaryOpen] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [showNewNote, setShowNewNote] = useState(false);
+  const [newNoteText, setNewNoteText] = useState("");
+  const [newNotePriority, setNewNotePriority] = useState("normal");
+  const [notes, setNotes] = useState<Array<{id: string, text: string, priority: string, time: string, userId: string}>>([
+    { id: "note-1", text: "Máy Slayer hơi yếu ở group 2, Espresso chảy chậm. Cần bảo trì sau ca tối nay.", priority: "important", time: "22:25", userId: "emp-1" },
+    { id: "note-2", text: "Bean Espresso blend còn 1.5kg. Ca mai cần đặt hàng thêm nếu không đủ phục vụ giờ cao điểm.", priority: "urgent", time: "22:20", userId: "emp-1" },
+    { id: "note-3", text: "Khách khen Latte Art hôm nay đẹp. Tiếp tục duy trì phong độ!", priority: "normal", time: "21:45", userId: "emp-1" },
+  ]);
+  const [handoverNotes, setHandoverNotes] = useState<Record<string, string>>({});
   const [submitEvidence, setSubmitEvidence] = useState<string | null>(null);
   const [evidenceNote, setEvidenceNote] = useState('');
 
@@ -82,13 +96,24 @@ export const EmployeeDashboard: React.FC<Props> = ({
     setEvidenceNote('');
   };
 
+  const handleAddNote = (text: string, priority: string) => {
+    const now = new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+    const newNote = { id: "note-" + Date.now(), text, priority, time: now, userId: user.id };
+    setNotes(prev => [newNote, ...prev]);
+  };
+
+  const handleDeleteNote = (noteId: string) => {
+    setNotes(prev => prev.filter(n => n.id !== noteId));
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col max-w-md mx-auto relative">
       <div className="bg-[#271310] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-2"><span className="material-symbols-outlined text-[#ff8f00] text-xl">coffee</span><span className="font-bold text-lg">CoffeeShift</span></div>
         <div className="flex items-center gap-3">
           <div className="bg-[#ff8f00] text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"><span className="material-symbols-outlined text-sm">star</span><span>{user.points || 0} Điểm</span></div>
-          <button type="button" onClick={onLogout} className="p-1.5 rounded-lg hover:bg-white/10 cursor-pointer"><span className="material-symbols-outlined text-white text-xl">qr_code_scanner</span></button>
+          <button type="button" onClick={() => setIsReviewOpen(true)} className="p-1.5 rounded-lg hover:bg-white/10 cursor-pointer" title="Đánh giá"><span className="material-symbols-outlined text-white text-xl">rate_review</span></button>
+          <button type="button" onClick={() => setIsSalaryOpen(true)} className="p-1.5 rounded-lg hover:bg-white/10 cursor-pointer" title="Xem lương"><span className="material-symbols-outlined text-white text-xl">qr_code_scanner</span></button>
         </div>
       </div>
 
@@ -239,60 +264,123 @@ export const EmployeeDashboard: React.FC<Props> = ({
 
         {activeNav === 'handover' && (
           <div className="px-4 py-4 space-y-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="material-symbols-outlined text-[#ff8f00] text-xl">swap_horiz</span>
-              <h1 className="font-bold text-xl text-gray-900">Sổ bàn giao ca</h1>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#ff8f00] text-xl">edit_note</span>
+                <h1 className="font-bold text-xl text-gray-900">Sổ tay ca làm</h1>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowNewNote(true)}
+                className="flex items-center gap-1 px-3 py-1.5 bg-[#ff8f00] text-white text-xs font-bold rounded-lg hover:bg-[#e67e00] transition-colors cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-sm">add</span> Ghi chú mới
+              </button>
             </div>
-            {myHandovers.length === 0 ? (
-              <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6 text-center">
-                <span className="material-symbols-outlined text-gray-300 text-4xl mb-2">inventory_2</span>
-                <p className="text-sm text-gray-500">Chưa có phiếu bàn giao ca nào</p>
+
+            <p className="text-xs text-gray-500">Ghi lại những điều quan trọng để ca sau vào để ý</p>
+
+            {/* New note form */}
+            {showNewNote && (
+              <div className="bg-white rounded-xl border-2 border-[#ff8f00]/30 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#ff8f00] uppercase">Ghi chú mới</span>
+                  <button type="button" onClick={() => setShowNewNote(false)} className="text-gray-400 hover:text-gray-600 cursor-pointer">
+                    <span className="material-symbols-outlined text-lg">close</span>
+                  </button>
+                </div>
+                <textarea
+                  value={newNoteText}
+                  onChange={e => setNewNoteText(e.target.value)}
+                  placeholder="VD: Bean espresso sắp hết, cần đặt hàng thêm. Máy Slayer hơi yếu ở nhóm 2, cần bảo trì..."
+                  className="w-full p-3 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-300 resize-none focus:outline-none focus:border-[#ff8f00] focus:ring-1 focus:ring-[#ff8f00]/30"
+                  rows={4}
+                />
+                <div className="flex gap-2">
+                  <select
+                    value={newNotePriority}
+                    onChange={e => setNewNotePriority(e.target.value)}
+                    className="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-600 focus:outline-none focus:border-[#ff8f00]"
+                  >
+                    <option value="normal">📌 Bình thường</option>
+                    <option value="important">⚠️ Quan trọng</option>
+                    <option value="urgent">🔴 Khẩn cấp</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (newNoteText.trim()) {
+                        handleAddNote(newNoteText.trim(), newNotePriority);
+                        setNewNoteText('');
+                        setNewNotePriority('normal');
+                        setShowNewNote(false);
+                      }
+                    }}
+                    disabled={!newNoteText.trim()}
+                    className={"flex-1 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer " + (newNoteText.trim() ? 'bg-[#ff8f00] text-white hover:bg-[#e67e00]' : 'bg-gray-100 text-gray-400 cursor-not-allowed')}
+                  >
+                    Lưu ghi chú
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Notes list */}
+            {notes.length === 0 ? (
+              <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 text-center">
+                <span className="material-symbols-outlined text-gray-300 text-5xl mb-3">sticky_note_2</span>
+                <p className="text-sm text-gray-500 font-medium">Chưa có ghi chú nào</p>
+                <p className="text-xs text-gray-400 mt-1">Nhấn "Ghi chú mới" để bắt đầu ghi lại những điều quan trọng</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {myHandovers.map(ho => (
-                  <div key={ho.id} className="bg-white rounded-xl border border-gray-200 p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">{ho.fromUserName} to {ho.toUserName}</p>
-                        <p className="text-xs text-gray-400">{ho.date}</p>
-                      </div>
-                      <span className={ho.status === 'confirmed' ? "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700" : "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700"}>
-                        {ho.status === 'confirmed' ? 'Đã xác nhận' : 'Chờ xác nhận'}
-                      </span>
-                    </div>
-                    <div className="space-y-2 mb-3">
-                      <p className="text-xs font-semibold text-gray-700 uppercase">Nguyen lieu</p>
-                      {ho.ingredients.map((ing, i) => (
-                        <div key={i} className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600">{ing.name}</span>
-                          <span className={ing.status === 'enough' ? "text-emerald-600" : ing.status === 'low' ? "text-amber-600" : "text-red-600"}>
-                            {ing.status === 'enough' ? 'Du' : ing.status === 'low' ? 'Thap' : 'Het'}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="space-y-2 mb-3">
-                      <p className="text-xs font-semibold text-gray-700 uppercase">May moc</p>
-                      {ho.machines.map((m, i) => (
-                        <div key={i} className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600">{m.name}</span>
-                          <span className={m.status === 'working' ? "text-emerald-600" : m.status === 'needs_cleaning' ? "text-amber-600" : "text-red-600"}>
-                            {m.status === 'working' ? 'Hoạt động' : m.status === 'needs_cleaning' ? 'Cần vệ sinh' : 'Hỏng'}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                    {ho.notes && <p className="text-xs text-gray-500 italic border-t pt-2 mt-2">Ghi chú: {ho.notes}</p>}
-                    {ho.status === 'pending' && (
-                      <button type="button" onClick={() => onConfirmHandover(ho.id)} className="w-full mt-3 py-2 bg-[#ff8f00] text-white text-sm font-bold rounded-xl cursor-pointer">
-                        Xác nhận bàn giao
-                      </button>
+              <div className="space-y-3">
+                {notes.map(note => (
+                  <div
+                    key={note.id}
+                    className={"bg-white rounded-xl border p-4 transition-all hover:shadow-sm " + (
+                      note.priority === 'urgent' ? 'border-red-300 bg-red-50/30' :
+                      note.priority === 'important' ? 'border-amber-300 bg-amber-50/30' :
+                      'border-gray-200'
                     )}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full object-cover" />
+                        <span className="text-xs font-semibold text-gray-700">{user.name}</span>
+                        <span className={"text-[10px] px-1.5 py-0.5 rounded-full font-medium " + (
+                          note.priority === 'urgent' ? 'bg-red-100 text-red-600' :
+                          note.priority === 'important' ? 'bg-amber-100 text-amber-600' :
+                          'bg-gray-100 text-gray-500'
+                        )}>
+                          {note.priority === 'urgent' ? '🔴 Khẩn cấp' : note.priority === 'important' ? '⚠️ Quan trọng' : '📌 Bình thường'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-gray-400">{note.time}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteNote(note.id)}
+                          className="p-1 hover:bg-red-50 rounded text-gray-300 hover:text-red-500 transition-colors cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-sm">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{note.text}</p>
                   </div>
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+{activeNav === 'leaderboard' && (
+          <div className="px-4 py-4">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="material-symbols-outlined text-[#ff8f00] text-xl">leaderboard</span>
+              <h1 className="font-bold text-xl text-gray-900">Xếp hạng</h1>
+            </div>
+            <Leaderboard allUsers={allUsers} currentUser={user} />
           </div>
         )}
 
@@ -314,14 +402,6 @@ export const EmployeeDashboard: React.FC<Props> = ({
               <div className="flex justify-between"><span className="text-sm text-gray-500">Giờ làm/tháng</span><span className="text-sm text-gray-900">{user.hoursWorkedMonth}h</span></div>
               <div className="flex justify-between"><span className="text-sm text-gray-500">Chăm chỉ</span><span className="text-sm text-gray-900">{user.punctualityScore}%</span></div>
             </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <p className="text-xs font-semibold text-gray-700 uppercase mb-2">Chứng chỉ</p>
-              <div className="flex flex-wrap gap-1.5">
-                {user.certifications.map((cert, i) => (
-                  <span key={i} className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">{cert}</span>
-                ))}
-              </div>
-            </div>
             <button type="button" onClick={onLogout} className="w-full py-3 bg-red-50 text-red-600 font-bold text-sm rounded-xl cursor-pointer border border-red-200">
               Đăng xuất
             </button>
@@ -333,7 +413,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
       <button type="button" onClick={() => setIsSwapOpen(true)} className="fixed bottom-24 right-4 w-14 h-14 bg-[#ff8f00] text-white rounded-full shadow-lg flex items-center justify-center z-30 cursor-pointer"><span className="material-symbols-outlined text-2xl">handshake</span></button>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-1 flex justify-around items-center z-40 max-w-md mx-auto">
-        {([{"id":"dashboard","icon":"dashboard","label":"Trang chủ"},{"id":"tasks","icon":"task_alt","label":"Công việc"},{"id":"evidence","icon":"photo_camera","label":"Bằng chứng"},{"id":"handover","icon":"swap_horiz","label":"Bàn giao"},{"id":"profile","icon":"person","label":"Cá nhân"}]).map(item => (
+        {([{"id":"dashboard","icon":"dashboard","label":"Trang chủ"},{"id":"tasks","icon":"task_alt","label":"Công việc"},{"id":"evidence","icon":"photo_camera","label":"Bằng chứng"},{"id":"handover","icon":"swap_horiz","label":"Bàn giao"},{"id":"leaderboard","icon":"leaderboard","label":"Xếp hạng"},{"id":"profile","icon":"person","label":"Cá nhân"}]).map(item => (
           <button key={item.id} type="button" onClick={() => setActiveNav(item.id)} className={"flex flex-col items-center gap-0.5 py-2 px-2 rounded-xl cursor-pointer " + (activeNav === item.id ? "bg-[#ff8f00] text-white" : "text-gray-400")}>
             <span className="material-symbols-outlined text-xl">{item.icon}</span>
             <span className="text-[9px] font-semibold">{item.label}</span>

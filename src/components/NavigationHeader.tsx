@@ -48,7 +48,7 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
                 CoffeeShift
               </span>
               <span className="hidden sm:inline-block text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#3e2723] text-[#ff8f00] border border-[#ff8f00]/30">
-                {currentUser.role === 'manager' ? 'Manager Portal' : 'Barista App'}
+                {currentUser.role === 'manager' ? 'Manager Portal' : 'Nhân viên App'}
               </span>
             </div>
             <p className="text-[11px] text-[#e4e4cc]/70 hidden md:block leading-none mt-0.5">

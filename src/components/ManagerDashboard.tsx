@@ -130,7 +130,7 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
             <p className="text-[#827472] uppercase text-[10px] font-semibold">Đang trên sàn (Live)</p>
             <div className="flex items-center gap-2 mt-1">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <p className="text-lg font-bold text-white font-mono">{activeFloorShifts.length} Barista</p>
+              <p className="text-lg font-bold text-white font-mono">{activeFloorShifts.length} Nhân viên</p>
             </div>
           </div>
 
@@ -228,7 +228,7 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
           }`}
         >
           <span className="material-symbols-outlined text-base">group</span>
-          <span>Đội ngũ Barista ({allUsers.length})</span>
+          <span>Đội ngũ nhân viên ({allUsers.length})</span>
         </button>
 
         <button
@@ -570,81 +570,132 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({
       )}
 
       {/* Tab 3: Operational Checklists & Quality Monitor */}
-      {activeTab === 'checklists' && (
-        <div className="bg-white rounded-2xl p-5 shadow-md border border-[#e5e2e1] space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e5e2e1]">
-            <div>
-              <h3 className="font-['Montserrat'] font-bold text-lg text-[#271310]">
-                Giám sát Quy chuẩn Vận hành & Tiêu chuẩn Chiết xuất
-              </h3>
-              <p className="text-xs text-[#827472]">Theo dõi tiến độ hoàn thành các quy trình mở/đóng ca</p>
-            </div>
+      {activeTab === 'checklists' && (() => {
+        const employees = allUsers.filter(u => u.role === "employee");
+        const todayStr = new Date().toISOString().split("T")[0];
 
-            <div className="text-right">
-              <span className="font-mono font-bold text-lg text-[#ff8f00]">{taskPercent}%</span>
-              <p className="text-[10px] text-[#827472]">Tiến độ toàn tiệm hôm nay</p>
-            </div>
-          </div>
+        const activities = employees.flatMap(emp => {
+          const items = [];
+          const userShifts = shifts.filter(s => s.userId === emp.id);
+          const todayShift = userShifts.find(s => s.date === todayStr);
 
-          <div className="w-full h-2.5 bg-[#f0eded] rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-[#ff8f00] to-emerald-500 rounded-full transition-all duration-500"
-              style={{ width: `${taskPercent}%` }}
-            ></div>
-          </div>
+          if (todayShift?.checkInTime) {
+            const isLate = todayShift.startTime && (() => {
+              const [cH, cM] = todayShift.checkInTime.split(":").map(Number);
+              const [sH, sM] = todayShift.startTime.split(":").map(Number);
+              return cH * 60 + cM > sH * 60 + sM + 10;
+            })();
+            items.push({
+              id: emp.id + "-checkin", user: emp,
+              action: isLate ? "diem danh TRE" : "diem danh dung gio",
+              detail: "Ca " + (todayShift.type === "morning" ? "Sang" : todayShift.type === "mid" ? "Trua" : "Toi") + " luc " + todayShift.checkInTime,
+              time: todayShift.checkInTime,
+              icon: isLate ? "warning" : "login",
+              color: isLate ? "#dc2626" : "#10b981",
+              bgColor: isLate ? "#fef2f2" : "#ecfdf5",
+            });
+          }
 
-          <div className="space-y-3">
-            {tasks.map((task) => (
-              <div
-                key={task.id}
-                onClick={() => onToggleTask(task.id)}
-                className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
-                  task.completed
-                    ? 'bg-emerald-50/40 border-emerald-200'
-                    : 'bg-[#fcf9f8] border-[#e5e2e1] hover:border-[#ff8f00]'
-                }`}
-              >
-                <button
-                  type="button"
-                  className={`w-5 h-5 mt-0.5 rounded flex items-center justify-center transition-all ${
-                    task.completed
-                      ? 'bg-emerald-600 text-white'
-                      : 'border-2 border-[#827472] hover:border-[#ff8f00]'
-                  }`}
-                >
-                  {task.completed && <span className="material-symbols-outlined text-sm font-bold">check</span>}
-                </button>
+          const empTasks = tasks.filter(t => t.completedBy === emp.name);
+          const empEvidence = evidence.filter(e => e.userId === emp.id && e.status === "approved");
+          const totalCompleted = empTasks.length + empEvidence.length;
+          if (totalCompleted > 0) {
+            items.push({
+              id: emp.id + "-tasks", user: emp,
+              action: "hoan thanh " + totalCompleted + " nhiem vu",
+              detail: empTasks.slice(0, 2).map(t => t.title).join(", ") + (empTasks.length > 2 ? "..." : ""),
+              time: empTasks[empTasks.length - 1]?.completedAt || "",
+              icon: "task_alt", color: "#10b981", bgColor: "#ecfdf5",
+            });
+          }
 
-                <div className="flex-1 text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-[#271310]">{task.title}</span>
-                    {task.isUrgent && (
-                      <span className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-700 text-[9px] font-bold">
-                        QUAN TRỌNG
-                      </span>
-                    )}
-                  </div>
-                  {task.description && (
-                    <p className="text-[11px] text-[#504442] mt-0.5">{task.description}</p>
-                  )}
-                  {task.completed && task.completedBy && (
-                    <p className="text-[10px] text-emerald-700 mt-1">
-                      ✓ Đã xác nhận: {task.completedBy} ({task.completedAt})
-                    </p>
-                  )}
-                </div>
+          if (todayShift?.checkOutTime) {
+            items.push({
+              id: emp.id + "-checkout", user: emp,
+              action: "ket ca",
+              detail: "Roi ca luc " + todayShift.checkOutTime,
+              time: todayShift.checkOutTime,
+              icon: "logout", color: "#6366f1", bgColor: "#eef2ff",
+            });
+          }
+
+          const pendingEvi = evidence.filter(e => e.userId === emp.id && e.status === "pending_review");
+          if (pendingEvi.length > 0) {
+            items.push({
+              id: emp.id + "-pending", user: emp,
+              action: "cho duyet bang chung",
+              detail: pendingEvi.length + " bang chung dang cho",
+              time: pendingEvi[0]?.submittedAt || "",
+              icon: "rate_review", color: "#f59e0b", bgColor: "#fffbeb",
+            });
+          }
+
+          if (todayShift && todayShift.status === "upcoming") {
+            items.push({
+              id: emp.id + "-upcoming", user: emp,
+              action: "sap vao ca",
+              detail: todayShift.startTime + " - " + todayShift.endTime + " (" + todayShift.station + ")",
+              time: todayShift.startTime,
+              icon: "schedule", color: "#827472", bgColor: "#f9fafb",
+            });
+          }
+
+          if (!todayShift) {
+            items.push({
+              id: emp.id + "-off", user: emp,
+              action: "nghi hom nay",
+              detail: "Khong co ca lam viec",
+              time: "",
+              icon: "event_busy", color: "#d1d5db", bgColor: "#f9fafb",
+            });
+          }
+
+          return items;
+        }).sort((a, b) => (b.time || "").localeCompare(a.time || ""));
+
+        return (
+          <div className="bg-white rounded-2xl p-5 shadow-md border border-[#e5e2e1] space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e5e2e1]">
+              <div>
+                <h3 className="font-['Montserrat'] font-bold text-lg text-[#271310]">
+                  Giam sat hoat dong nhan vien
+                </h3>
+                <p className="text-xs text-[#827472]">Theo doi realtime trang thai tung nhan vien trong ca hom nay</p>
               </div>
-            ))}
+              <div className="text-right">
+                <span className="font-mono font-bold text-lg text-[#ff8f00]">{activities.length}</span>
+                <p className="text-[10px] text-[#827472]">Hoat dong</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {activities.map(activity => (
+                <div key={activity.id} className="flex items-start gap-3 p-3 rounded-xl border border-[#e5e2e1] hover:border-[#ff8f00]/30 transition-all">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: activity.bgColor }}>
+                    <span className="material-symbols-outlined text-base" style={{ color: activity.color }}>{activity.icon}</span>
+                  </div>
+                  <img src={activity.user.avatar} alt={activity.user.name} className="w-8 h-8 rounded-full object-cover flex-shrink-0 -ml-1 border-2 border-white" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs">
+                      <span className="font-bold text-[#271310]">{activity.user.name}</span>{" "}
+                      <span style={{ color: activity.color }} className="font-medium">{activity.action}</span>
+                    </p>
+                    <p className="text-[11px] text-[#827472] truncate">{activity.detail}</p>
+                  </div>
+                  {activity.time && <span className="text-[10px] text-[#827472] whitespace-nowrap">{activity.time}</span>}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
+
 
       {/* Tab 4: Staff Directory */}
       {activeTab === 'staff' && (
         <div className="bg-white rounded-2xl p-5 shadow-md border border-[#e5e2e1] space-y-5">
           <div className="pb-3 border-b border-[#e5e2e1]">
             <h3 className="font-['Montserrat'] font-bold text-lg text-[#271310]">
-              Danh bạ nhân viên Barista & Nhân sự chi nhánh
+              Danh bạ nhân viên & Nhân sự chi nhánh
             </h3>
             <p className="text-xs text-[#827472]">Hồ sơ chứng chỉ, năng lực và mức lương theo giờ</p>
           </div>
