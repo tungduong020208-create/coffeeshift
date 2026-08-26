@@ -1,7 +1,20 @@
 import { UserProfile, Shift, TaskItem, ShiftSwapRequest, StoreAnnouncement, AppNotification, TaskEvidence, ShiftHandover } from '../types';
 
 // Khong co tai khoan mau nao - nhan vien se dang ky qua form
-export const INITIAL_USERS: UserProfile[] = [];
+export const INITIAL_USERS: UserProfile[] = [{
+    id: 'mgr-1',
+    name: 'Quản lý cửa hàng',
+    role: 'manager',
+    email: 'manager@coffeeshift.com',
+    avatar: 'https://ui-avatars.com/api/?name=QL&background=271310&color=e4e4cc&bold=true',
+    phone: '0900000000',
+    position: 'General Store Manager',
+    hourlyRate: 75000,
+    hoursWorkedMonth: 0,
+    punctualityScore: 100,
+    branch: 'CoffeeShift',
+    certifications: [],
+  },];
 
 // Khong co du lieu mau - he thong bat dau trong sach
 export const INITIAL_SHIFTS: Shift[] = [];
