@@ -21,6 +21,8 @@ export interface UserProfile {
   branch: string;
   certifications: string[];
   points?: number;
+  storeCode?: string;
+  password?: string;
 }
 
 export interface Shift {

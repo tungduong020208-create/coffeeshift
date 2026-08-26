@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { UserRole } from '../types';
 
 interface LoginScreenProps {
+  onSwitchToRegister?: () => void;
   onLogin: (role: UserRole, email: string) => void;
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
+export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSwitchToRegister }) => {
   const [role, setRole] = useState<UserRole>('employee');
   const [email, setEmail] = useState('barista@coffeeshift.com');
   const [password, setPassword] = useState('••••••••');
@@ -253,13 +254,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
           {/* Footer Assistance */}
           <p className="font-['Inter'] text-[13px] text-center text-[#827472] mt-6">
-            Don't have an account?{' '}
+            Chua co tai khoan?{' '}
             <button
               type="button"
-              onClick={() => setShowContactModal(true)}
+              onClick={() => onSwitchToRegister ? onSwitchToRegister() : setShowContactModal(true)}
               className="text-[#8f4e00] font-semibold hover:text-[#ff8f00] hover:underline cursor-pointer inline transition-colors"
             >
-              Contact your manager
+              Dang ky ngay
             </button>
           </p>
         </section>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { UserProfile, Shift, TaskItem, ShiftSwapRequest, StoreAnnouncement, AppNotification, UserRole, TaskEvidence, ShiftHandover } from './types';
 import { INITIAL_USERS, INITIAL_SHIFTS, INITIAL_TASKS, INITIAL_SWAPS, INITIAL_ANNOUNCEMENTS, INITIAL_NOTIFICATIONS, INITIAL_EVIDENCE, INITIAL_HANDOVERS } from './data/mockData';
 import { LoginScreen } from './components/LoginScreen';
+import { RegisterScreen } from './components/RegisterScreen';
 import { NavigationHeader } from './components/NavigationHeader';
 import { EmployeeDashboard } from './components/EmployeeDashboard';
 import { ManagerDashboard } from './components/ManagerDashboard';
@@ -53,6 +54,7 @@ export default function App() {
   });
 
   const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>('desktop');
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'register'>('login');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Sync to localStorage
@@ -473,8 +475,34 @@ export default function App() {
   };
 
   // If not logged in, render the exact pixel-perfect Login screen
+  const handleRegister = (name: string, phone: string, password: string, storeCode: string) => {
+    const newUser: UserProfile = {
+      id: `user-${Date.now()}`,
+      name,
+      role: 'employee' as UserRole,
+      phone,
+      email: `${phone}@coffeeshift.com`,
+      position: 'Nhan vien moi',
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff8f00&color=fff&bold=true`,
+      hourlyRate: 45000,
+      hoursWorkedMonth: 0,
+      punctualityScore: 100,
+      branch: 'CoffeeShift',
+      certifications: [],
+      points: 0,
+      storeCode,
+      password,
+    };
+    setUsers(prev => [...prev, newUser]);
+    showToast(`Dang ky thanh cong! Chao mung ${name} den voi CoffeeShift!`);
+    setCurrentScreen('login');
+  };
+
   if (!currentUser) {
-    return <LoginScreen onLogin={handleLogin} />;
+    if (currentScreen === 'register') {
+      return <RegisterScreen onRegister={handleRegister} onSwitchToLogin={() => setCurrentScreen('login')} />;
+    }
+    return <LoginScreen onLogin={handleLogin} onSwitchToRegister={() => setCurrentScreen('register')} />;
   }
 
   return (
