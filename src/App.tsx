@@ -53,7 +53,12 @@ export default function App() {
     return saved ? JSON.parse(saved) : INITIAL_HANDOVERS;
   });
 
-  const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>('desktop');
+  const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768 ? 'mobile' : 'desktop';
+    }
+    return 'desktop';
+  });
   const [currentScreen, setCurrentScreen] = useState<'login' | 'register'>('login');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -98,7 +103,18 @@ export default function App() {
     localStorage.setItem('coffeeshift_handovers', JSON.stringify(handovers));
   }, [handovers]);
 
-  const showToast = (msg: string) => {
+  
+  // Auto-detect screen size for mobile/desktop layout
+  useEffect(() => {
+    const handleResize = () => {
+      setViewMode(window.innerWidth < 768 ? 'mobile' : 'desktop');
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => {
       setToastMessage(null);
@@ -524,7 +540,7 @@ export default function App() {
         onSwitchUser={handleSwitchUser}
         allUsers={users}
         viewMode={viewMode}
-        onToggleViewMode={() => setViewMode(viewMode === 'mobile' ? 'desktop' : 'mobile')}
+        onToggleViewMode={() => {}}
         onClearNotifications={handleClearNotifications}
         onMarkNotificationRead={handleMarkNotifRead}
       />
