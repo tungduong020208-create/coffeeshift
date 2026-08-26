@@ -39,7 +39,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSwitchToReg
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      onLogin(role, role === 'employee' ? 'barista@coffeeshift.com' : 'manager@coffeeshift.com');
+      onLogin(role, email);
     }, 400);
   };
 

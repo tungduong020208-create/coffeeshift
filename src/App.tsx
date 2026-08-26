@@ -125,7 +125,7 @@ const showToast = (msg: string) => {
 
   // Handle Login
   const handleLogin = (role: UserRole, email: string) => {
-    const userMatch = users.find((u) => u.email.toLowerCase() === email.toLowerCase() || u.role === role);
+    const userMatch = users.find((u) => u.email.toLowerCase() === email.toLowerCase()) || users.find((u) => u.role === role);
     if (userMatch) {
       setCurrentUserId(userMatch.id);
       showToast(`Chào mừng ${userMatch.name} quay trở lại CoffeeShift! ☕`);
