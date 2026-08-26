@@ -88,7 +88,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
   const sc = (ts?: TaskStatus) => TASK_STATUS_CONFIG[ts || 'not_started'];
 
   const myEvidence = evidence.filter((e: any) => e.userId === user.id);
-  const myHandovers = handovers.filter((h: any) => h.fromUserId === user.id || h.toUserId === user.id);
+  const myHandovers = handovers.filter((h: any) => h != null && (h.fromUserId === user.id || h.toUserId === user.id));
 
   const handleSubmitEvidence = (taskId: string) => {
     onSubmitEvidence(taskId, 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=300', evidenceNote);

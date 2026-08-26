@@ -42,6 +42,7 @@ export interface Shift {
   breakStartTime?: string;
   breakMinutesUsed?: number;
   notes?: string;
+  checkInLocation?: { lat: number; lng: number; address: string };
 }
 
 export interface TaskItem {

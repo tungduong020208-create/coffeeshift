@@ -132,7 +132,7 @@ export default function App() {
   };
 
   // Clock In handler (on-time = +5 points)
-  const handleClockIn = (shiftId: string, station: string) => {
+  const handleClockIn = (shiftId: string, station: string, location?: { lat: number; lng: number; address: string }) => {
     const now = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     setShifts((prev) =>
       prev.map((s) =>
