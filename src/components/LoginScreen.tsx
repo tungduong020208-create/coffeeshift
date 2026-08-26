@@ -8,8 +8,8 @@ interface LoginScreenProps {
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSwitchToRegister }) => {
   const [role, setRole] = useState<UserRole>('employee');
-  const [email, setEmail] = useState('barista@coffeeshift.com');
-  const [password, setPassword] = useState('••••••••');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -45,33 +45,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSwitchToReg
 
   return (
     <div className="min-h-screen bg-[#271310] flex flex-col items-center justify-center p-4 md:p-8 antialiased">
-      {/* Quick Demo Switcher Hint at the Top */}
-      <div className="mb-4 flex flex-wrap items-center justify-center gap-2 max-w-[420px] text-xs">
-        <span className="text-[#e4e4cc]/80 text-[11px] uppercase tracking-wider font-semibold">Tài khoản mẫu:</span>
-        <button
-          type="button"
-          onClick={() => {
-            handleRoleChange('employee');
-            setEmail('barista@coffeeshift.com');
-          }}
-          className="px-2.5 py-1 rounded-full bg-[#3e2723] hover:bg-[#ff8f00] hover:text-[#271310] text-[#e4e4cc] transition-colors flex items-center gap-1 border border-[#e4e4cc]/20 cursor-pointer"
-        >
-          <span>☕</span>
-          <span>Alex Minh (Nhân viên)</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            handleRoleChange('manager');
-            setEmail('manager@coffeeshift.com');
-          }}
-          className="px-2.5 py-1 rounded-full bg-[#3e2723] hover:bg-[#ff8f00] hover:text-[#271310] text-[#e4e4cc] transition-colors flex items-center gap-1 border border-[#e4e4cc]/20 cursor-pointer"
-        >
-          <span>📋</span>
-          <span>Nguyễn Phương (Quản lý)</span>
-        </button>
-      </div>
-
       {/* Main Login Container - Faithfully matching HTML & design spec */}
       <main className="w-full max-w-[420px] bg-[#e4e4cc] rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col items-center transition-all duration-300">
         
