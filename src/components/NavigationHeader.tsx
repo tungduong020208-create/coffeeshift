@@ -7,9 +7,7 @@ interface NavigationHeaderProps {
   onLogout: () => void;
   onSwitchUser: (userId: string) => void;
   allUsers: UserProfile[];
-  viewMode: 'mobile' | 'desktop';
-  onToggleViewMode: () => void;
-  onClearNotifications: () => void;
+      onClearNotifications: () => void;
   onMarkNotificationRead: (id: string) => void;
 }
 
@@ -19,9 +17,7 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
   onLogout,
   onSwitchUser,
   allUsers,
-  viewMode,
-  onToggleViewMode,
-  onMarkNotificationRead,
+      onMarkNotificationRead,
 }) => {
   const [time, setTime] = useState(new Date());
   const [showNotifs, setShowNotifs] = useState(false);
@@ -71,21 +67,6 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
-          {/* Frame Viewport Mode Switcher */}
-          <button
-            type="button"
-            onClick={onToggleViewMode}
-            className="px-2.5 py-1.5 rounded-lg bg-[#3e2723] hover:bg-[#504442] text-[#e4e4cc] text-xs font-medium flex items-center gap-1.5 border border-[#827472]/30 transition-all cursor-pointer"
-            title={viewMode === 'mobile' ? 'Chuyển sang chế độ toàn màn hình Desktop' : 'Chuyển sang khung mô phỏng Điện thoại (Mobile Frame)'}
-          >
-            <span className="material-symbols-outlined text-sm">
-              {viewMode === 'mobile' ? 'desktop_windows' : 'smartphone'}
-            </span>
-            <span className="hidden sm:inline">
-              {viewMode === 'mobile' ? 'Xem Desktop' : 'Xem Mobile Frame'}
-            </span>
-          </button>
-
           {/* Quick Role Switcher Pill */}
           <div className="relative">
             <button

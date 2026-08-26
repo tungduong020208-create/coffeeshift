@@ -548,71 +548,7 @@ const showToast = (msg: string) => {
       {/* Main Body Content Container */}
       <main className="flex-1 flex justify-center p-3 sm:p-5 md:p-8">
         
-        {viewMode === 'mobile' ? (
-          /* Mobile Phone Mockup Framing (matching the aesthetic container in the image) */
-          <div className="w-full max-w-[430px] bg-white rounded-[36px] shadow-[0_20px_60px_rgba(39,19,16,0.3)] border-8 border-[#271310] overflow-hidden flex flex-col relative my-auto">
-            {/* Phone Speaker Notch / Dynamic Island */}
-            <div className="w-full bg-[#271310] h-6 flex items-center justify-center pt-1">
-              <div className="w-20 h-3.5 bg-black rounded-full"></div>
-            </div>
-
-            <div className="p-4 overflow-y-auto max-h-[80vh]">
-              {currentUser.role === 'employee' ? (
-                <EmployeeDashboard
-                  user={currentUser}
-                  shifts={shifts}
-                  tasks={tasks}
-                  swaps={swaps}
-                  announcements={announcements}
-                  allUsers={users}
-                  evidence={evidence}
-                  handovers={handovers}
-                  onToggleTask={handleToggleTask}
-                  onSubmitEvidence={handleSubmitEvidence}
-                  onApproveEvidence={handleApproveEvidence}
-                  onRejectEvidence={handleRejectEvidence}
-                  onConfirmHandover={handleConfirmHandover}
-                  onAddTask={handleAddTask}
-                  onClockIn={handleClockIn}
-                  onClockOut={handleClockOut}
-                  onToggleBreak={handleToggleBreak}
-                  onSubmitSwap={handleSubmitSwap}
-                  onAcceptSwap={handleAcceptSwap}
-                  onLogout={handleLogout}
-                />
-              ) : (
-                <ManagerDashboard
-                  manager={currentUser}
-                  shifts={shifts}
-                  tasks={tasks}
-                  swaps={swaps}
-                  announcements={announcements}
-                  allUsers={users}
-                  evidence={evidence}
-                  handovers={handovers}
-                  onAddShift={handleAddShift}
-                  onDeleteShift={handleDeleteShift}
-                  onApproveSwap={handleApproveSwap}
-                  onRejectSwap={handleRejectSwap}
-                  onToggleTask={handleToggleTask}
-                  onSubmitEvidence={handleSubmitEvidence}
-                  onApproveEvidence={handleApproveEvidence}
-                  onRejectEvidence={handleRejectEvidence}
-                  onConfirmHandover={handleConfirmHandover}
-                  onPostAnnouncement={handlePostAnnouncement}
-                  onDeleteAnnouncement={handleDeleteAnnouncement}
-                />
-              )}
-            </div>
-
-            {/* Phone Bottom Home Bar */}
-            <div className="w-full bg-white h-6 flex items-center justify-center pb-1">
-              <div className="w-32 h-1 bg-[#d3c3c0] rounded-full"></div>
-            </div>
-          </div>
-        ) : (
-          /* Desktop / Tablet Fluid Layout */
-          <div className="w-full max-w-7xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto">
             {currentUser.role === 'employee' ? (
               <EmployeeDashboard
                 user={currentUser}
@@ -650,7 +586,6 @@ const showToast = (msg: string) => {
               />
             )}
           </div>
-        )}
 
       </main>
 
