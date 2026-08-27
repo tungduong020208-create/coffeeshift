@@ -14,7 +14,24 @@ export const INITIAL_USERS: UserProfile[] = [{
     punctualityScore: 100,
     branch: 'CoffeeShift',
     certifications: [],
-  },];
+  },
+  {
+    id: 'emp-1',
+    name: 'Nguyễn Văn B',
+    role: 'employee',
+    email: '0912345678',
+    avatar: 'https://ui-avatars.com/api/?name=NVB&background=8B7355&color=fff&bold=true',
+    phone: '0912345678',
+    position: 'Barista',
+    hourlyRate: 35000,
+    hoursWorkedMonth: 0,
+    punctualityScore: 100,
+    branch: 'CoffeeShift',
+    storeCode: 'CSFLAG',
+    password: '123456',
+    certifications: [],
+  },
+];
 
 // Khong co du lieu mau - he thong bat dau trong sach
 export const INITIAL_SHIFTS: Shift[] = [];
