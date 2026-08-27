@@ -5,8 +5,10 @@ import { SalaryModal } from './modals/SalaryModal';
 import { CustomerReviewModal } from './modals/CustomerReviewModal';
 import { ClockInModal } from './modals/ClockInModal';
 import { SwapShiftModal } from './modals/SwapShiftModal';
+import { AddShiftModal } from './modals/AddShiftModal';
+import { NewAnnouncementModal } from './modals/NewAnnouncementModal';
 
-type NavTab = 'dashboard' | 'tasks' | 'evidence' | 'handover' | 'leaderboard' | 'profile';
+type NavTab = 'dashboard' | 'tasks' | 'evidence' | 'handover' | 'leaderboard' | 'profile' | 'roster' | 'approvals' | 'checklists' | 'staff' | 'announcements';
 
 interface Props {
   user: UserProfile; shifts: Shift[]; tasks: TaskItem[]; swaps: ShiftSwapRequest[];
@@ -18,17 +20,28 @@ interface Props {
   onClockIn: (id: string, station: string) => void; onClockOut: (id: string) => void;
   onToggleBreak: (id: string) => void; onSubmitSwap: (p: any) => void;
   onAcceptSwap: (id: string) => void; onLogout: () => void;
+  onAddShift?: (s: Omit<Shift, "id">) => void;
+  onDeleteShift?: (id: string) => void;
+  onApproveSwap?: (id: string) => void;
+  onRejectSwap?: (id: string) => void;
+  onPostAnnouncement?: (a: Omit<StoreAnnouncement, "id" | "timestamp">) => void;
+  onDeleteAnnouncement?: (id: string) => void;
 }
 
 export const EmployeeDashboard: React.FC<Props> = ({
   user, shifts, tasks, swaps, announcements, allUsers, evidence = [], handovers = [],
   onToggleTask, onSubmitEvidence, onApproveEvidence, onRejectEvidence, onConfirmHandover,
-  onAddTask, onClockIn, onClockOut, onToggleBreak, onSubmitSwap, onAcceptSwap, onLogout
+  onAddTask, onClockIn, onClockOut, onToggleBreak, onSubmitSwap, onAcceptSwap, onLogout,
+  onAddShift, onDeleteShift, onApproveSwap, onRejectSwap, onPostAnnouncement, onDeleteAnnouncement
 }) => {
   const [activeNav, setActiveNav] = useState<NavTab>('dashboard');
   const [isClockInOpen, setIsClockInOpen] = useState(false);
   const [isClockOutOpen, setIsClockOutOpen] = useState(false);
   const [isSwapOpen, setIsSwapOpen] = useState(false);
+  const [isAddShiftOpen, setIsAddShiftOpen] = useState(false);
+  const [isNewAnnoOpen, setIsNewAnnoOpen] = useState(false);
+  const [selectedDayFilter, setSelectedDayFilter] = useState<string>("all");
+  const isManager = user.role === 'manager';
   const [isSalaryOpen, setIsSalaryOpen] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [showNewNote, setShowNewNote] = useState(false);
@@ -87,6 +100,18 @@ export const EmployeeDashboard: React.FC<Props> = ({
   );
   const sc = (ts?: TaskStatus) => TASK_STATUS_CONFIG[ts || 'not_started'];
 
+  const pendingSwaps = swaps.filter((s: any) => s.status === 'pending_manager');
+  const activeFloorShifts = shifts.filter((s: any) => s.date === todayStr && s.status === 'checked_in');
+  const uniqueDates = Array.from(new Set(shifts.map((s: any) => s.date))).sort();
+  const filteredShifts = shifts.filter((s: any) => selectedDayFilter === 'all' ? true : s.date === selectedDayFilter);
+  const completedTasks = tasks.filter((t: any) => t.completed).length;
+  const taskPercent = Math.round((completedTasks / (tasks.length || 1)) * 100);
+  const pendingEvidence = evidence.filter((e: any) => e.status === 'pending_review');
+  const employees = allUsers.filter((u: any) => u.role === 'employee');
+  const todayShiftsAll = shifts.filter((s: any) => s.date === todayStr);
+  const morningShift = todayShiftsAll.filter((s: any) => s.type === 'morning');
+  const midShift = todayShiftsAll.filter((s: any) => s.type === 'mid');
+  const closingShift = todayShiftsAll.filter((s: any) => s.type === 'closing');
   const myEvidence = evidence.filter((e: any) => e.userId === user.id);
   const myHandovers = handovers.filter((h: any) => h != null && (h.fromUserId === user.id || h.toUserId === user.id));
 
@@ -111,14 +136,24 @@ export const EmployeeDashboard: React.FC<Props> = ({
       <div className="bg-[#271310] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-2"><span className="material-symbols-outlined text-[#ff8f00] text-xl">coffee</span><span className="font-bold text-lg">CoffeeShift</span></div>
         <div className="flex items-center gap-3">
-          <div className="bg-[#ff8f00] text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"><span className="material-symbols-outlined text-sm">star</span><span>{user.points || 0} Điểm</span></div>
+          {!isManager && <div className="bg-[#ff8f00] text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1"><span className="material-symbols-outlined text-sm">star</span><span>{user.points || 0} Điểm</span></div>}
+          {!isManager && <>
+            
+            
+          </>}
+          {isManager && <>
+            <button type="button" onClick={() => setIsAddShiftOpen(true)} className="px-3 py-1.5 rounded-lg bg-[#ff8f00] hover:bg-[#e67e00] text-white text-xs font-bold flex items-center gap-1 cursor-pointer"><span className="material-symbols-outlined text-sm">add_circle</span> Phân ca</button>
+            <button type="button" onClick={() => setIsNewAnnoOpen(true)} className="p-1.5 rounded-lg hover:bg-white/10 cursor-pointer"><span className="material-symbols-outlined text-white text-xl">campaign</span></button>
+          </>}
           <button type="button" onClick={() => setIsReviewOpen(true)} className="p-1.5 rounded-lg hover:bg-white/10 cursor-pointer" title="Đánh giá"><span className="material-symbols-outlined text-white text-xl">rate_review</span></button>
           <button type="button" onClick={() => setIsSalaryOpen(true)} className="p-1.5 rounded-lg hover:bg-white/10 cursor-pointer" title="Xem lương"><span className="material-symbols-outlined text-white text-xl">qr_code_scanner</span></button>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto pb-20">
-        {activeNav === 'dashboard' && (
+        {activeNav === 'dashboard' && isManager && (<div className="px-4 py-4 space-y-5"><div><h1 className="font-bold text-2xl text-gray-900">Tong quan</h1><p className="text-sm text-gray-500">Hom nay</p></div><div className="grid grid-cols-2 gap-3"><div className="bg-[#271310] p-3 rounded-xl text-xs text-white"><p className="text-gray-400 uppercase text-[10px] font-semibold">Dang tren san</p><p className="text-lg font-bold font-mono">{activeFloorShifts.length}</p></div><div className="bg-[#271310] p-3 rounded-xl text-xs text-white"><p className="text-gray-400 uppercase text-[10px] font-semibold">Cho duyet</p><p className="text-lg font-bold font-mono text-amber-400">{pendingSwaps.length}</p></div><div className="bg-[#271310] p-3 rounded-xl text-xs text-white"><p className="text-gray-400 uppercase text-[10px] font-semibold">Checklist</p><p className="text-lg font-bold font-mono text-[#ff8f00]">{taskPercent}%</p></div><div className="bg-[#271310] p-3 rounded-xl text-xs text-white"><p className="text-gray-400 uppercase text-[10px] font-semibold">Nhan su</p><p className="text-lg font-bold font-mono">{allUsers.length}</p></div></div></div>) }
+
+{activeNav === 'dashboard' && !isManager && (
           <div className="px-4 py-4 space-y-5">
             <div><h1 className="font-bold text-2xl text-gray-900">Dashboard</h1><p className="text-sm text-gray-500">Hôm nay, {dateStr}</p></div>
             {todayShift ? (
@@ -229,7 +264,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
   )
 }
 
-        {activeNav === 'evidence' && (
+        {activeNav === 'evidence' && !isManager && (
           <div className="px-4 py-4 space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="material-symbols-outlined text-[#ff8f00] text-xl">photo_camera</span>
@@ -262,7 +297,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
           </div>
         )}
 
-        {activeNav === 'handover' && (
+        {activeNav === 'handover' && !isManager && (
           <div className="px-4 py-4 space-y-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
@@ -374,6 +409,31 @@ export const EmployeeDashboard: React.FC<Props> = ({
           </div>
         )}
 
+        {activeNav === 'roster' && isManager && (
+          <div className="px-4 py-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2"><span className="material-symbols-outlined text-[#ff8f00] text-xl">calendar_view_week</span><h1 className="font-bold text-xl text-gray-900">Lich phan ca</h1></div>
+            <div className="space-y-3">
+              {filteredShifts.length===0&&<p className="text-center text-gray-400 py-8 text-sm">Chua co ca nao</p>}
+              {filteredShifts.map(s=>(<div key={s.id} className="p-3 rounded-xl border border-gray-200 bg-gray-50 text-xs relative"><div className="flex items-center justify-between pl-2"><div className="flex items-center gap-2"><img src={s.userAvatar} className="w-8 h-8 rounded-full object-cover"/><div><p className="font-bold text-xs">{s.userName}</p></div></div><span className="text-[#ff8f00] font-bold">{s.startTime}-{s.endTime}</span></div><div className="pl-2 mt-1"><p className="text-gray-500">{s.date} - {s.station}</p></div><div className="flex justify-end mt-1"><button type="button" onClick={()=>onDeleteShift?.(s.id)} className="text-rose-600 text-[11px]">Xoa</button></div></div>))}
+            </div>
+          </div>
+        )}
+
+        {activeNav === 'approvals' && isManager && (
+          <div className="px-4 py-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2"><span className="material-symbols-outlined text-[#ff8f00] text-xl">verified</span><h1 className="font-bold text-xl text-gray-900">Xet duyet doi ca</h1></div>
+            {swaps.length===0?<p className="text-center text-gray-400 py-8">Chua co yeu cau nao.</p>:
+            <div className="space-y-3">{swaps.map(sw=>(<div key={sw.id} className="p-4 rounded-xl border border-gray-200 text-xs space-y-2"><div className="flex items-center justify-between"><span className="font-bold">{sw.fromUserName}</span><span className="text-[#ff8f00]">{sw.shiftDate}</span></div><p className="text-gray-500 italic">{sw.reason}</p>{sw.status==='pending_manager'&&<div className="flex justify-end gap-2"><button onClick={()=>onRejectSwap?.(sw.id)} className="px-3 py-1 border border-rose-300 text-rose-700 rounded text-xs">Tu choi</button><button onClick={()=>onApproveSwap?.(sw.id)} className="px-3 py-1 bg-emerald-600 text-white rounded text-xs">Duyet</button></div>}</div>))}</div>}
+          </div>
+        )}
+
+        {activeNav === 'staff' && isManager && (
+          <div className="px-4 py-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2"><span className="material-symbols-outlined text-[#ff8f00] text-xl">group</span><h1 className="font-bold text-xl text-gray-900">Doi ngu nhan vien</h1></div>
+            <div className="space-y-3">{allUsers.map(m=>(<div key={m.id} className="p-3 rounded-xl border border-gray-200 bg-gray-50 text-xs"><div className="flex items-center gap-3"><img src={m.avatar} className="w-10 h-10 rounded-full object-cover"/><div><p className="font-bold text-sm">{m.name}</p><p className="text-[10px] text-gray-400">{m.position} - {m.email}</p></div></div></div>))}</div>
+          </div>
+        )}
+
 {activeNav === 'leaderboard' && (
           <div className="px-4 py-4">
             <div className="flex items-center gap-2 mb-4">
@@ -384,7 +444,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
           </div>
         )}
 
-        {activeNav === 'profile' && (
+        {activeNav === 'profile' && !isManager && (
           <div className="px-4 py-4 space-y-4">
             <div className="flex flex-col items-center text-center">
               <img src={user.avatar} alt={user.name} className="w-20 h-20 rounded-full object-cover border-3 border-[#ff8f00] mb-3" />
@@ -413,7 +473,22 @@ export const EmployeeDashboard: React.FC<Props> = ({
       <button type="button" onClick={() => setIsSwapOpen(true)} className="fixed bottom-24 right-4 w-14 h-14 bg-[#ff8f00] text-white rounded-full shadow-lg flex items-center justify-center z-30 cursor-pointer"><span className="material-symbols-outlined text-2xl">handshake</span></button>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-1 flex justify-around items-center z-40 max-w-md mx-auto">
-        {([{"id":"dashboard","icon":"dashboard","label":"Trang chủ"},{"id":"tasks","icon":"task_alt","label":"Công việc"},{"id":"evidence","icon":"photo_camera","label":"Bằng chứng"},{"id":"handover","icon":"swap_horiz","label":"Bàn giao"},{"id":"leaderboard","icon":"leaderboard","label":"Xếp hạng"},{"id":"profile","icon":"person","label":"Cá nhân"}]).map(item => (
+        {(isManager ? [
+    { id: 'dashboard', icon: 'dashboard', label: 'Trang chủ' },
+    { id: 'roster', icon: 'calendar_view_week', label: 'Phân ca' },
+    { id: 'approvals', icon: 'verified', label: 'Duyệt' },
+    { id: 'tasks', icon: 'task_alt', label: 'Công việc' },
+    { id: 'checklists', icon: 'checklist_rtl', label: 'Giám sát' },
+    { id: 'staff', icon: 'group', label: 'Nhân viên' },
+    { id: 'leaderboard', icon: 'leaderboard', label: 'Xếp hạng' },
+  ] : [
+    { id: 'dashboard', icon: 'dashboard', label: 'Trang chủ' },
+    { id: 'tasks', icon: 'task_alt', label: 'Công việc' },
+    { id: 'evidence', icon: 'photo_camera', label: 'Bằng chứng' },
+    { id: 'handover', icon: 'swap_horiz', label: 'Bàn giao' },
+    { id: 'leaderboard', icon: 'leaderboard', label: 'Xếp hạng' },
+    { id: 'profile', icon: 'person', label: 'Cá nhân' },
+  ]).map(item => (
           <button key={item.id} type="button" onClick={() => setActiveNav(item.id)} className={"flex flex-col items-center gap-0.5 py-2 px-2 rounded-xl cursor-pointer " + (activeNav === item.id ? "bg-[#ff8f00] text-white" : "text-gray-400")}>
             <span className="material-symbols-outlined text-xl">{item.icon}</span>
             <span className="text-[9px] font-semibold">{item.label}</span>
@@ -421,6 +496,10 @@ export const EmployeeDashboard: React.FC<Props> = ({
         ))}
       </div>
 
+      {isManager && <AddShiftModal allUsers={allUsers} isOpen={isAddShiftOpen} onClose={() => setIsAddShiftOpen(false)} onAddShift={onAddShift!} />}
+      {isManager && <NewAnnouncementModal currentUser={user} isOpen={isNewAnnoOpen} onClose={() => setIsNewAnnoOpen(false)} onPostAnnouncement={onPostAnnouncement!} />}
+      {isManager && <AddShiftModal allUsers={allUsers} isOpen={isAddShiftOpen} onClose={()=>setIsAddShiftOpen(false)} onAddShift={onAddShift!} />}
+      {isManager && <NewAnnouncementModal currentUser={user} isOpen={isNewAnnoOpen} onClose={()=>setIsNewAnnoOpen(false)} onPostAnnouncement={onPostAnnouncement!} />}
       <ClockInModal shift={todayShift} user={user} isOpen={isClockInOpen} onClose={() => setIsClockInOpen(false)} onConfirmClockIn={onClockIn} onConfirmClockOut={onClockOut} />
       <ClockInModal shift={todayShift} user={user} isOpen={isClockOutOpen} onClose={() => setIsClockOutOpen(false)} onConfirmClockIn={onClockIn} onConfirmClockOut={onClockOut} isClockingOut={true} />
       <SwapShiftModal userShifts={userShifts} allUsers={allUsers} currentUserId={user.id} isOpen={isSwapOpen} onClose={() => setIsSwapOpen(false)} onSubmitSwap={onSubmitSwap} />

@@ -53,12 +53,6 @@ export default function App() {
     return saved ? JSON.parse(saved) : INITIAL_HANDOVERS;
   });
 
-  const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth < 768 ? 'mobile' : 'desktop';
-    }
-    return 'desktop';
-  });
   const [currentScreen, setCurrentScreen] = useState<'login' | 'register'>('login');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -102,17 +96,6 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('coffeeshift_handovers', JSON.stringify(handovers));
   }, [handovers]);
-
-  
-  // Auto-detect screen size for mobile/desktop layout
-  useEffect(() => {
-    const handleResize = () => {
-      setViewMode(window.innerWidth < 768 ? 'mobile' : 'desktop');
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
 const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -532,25 +515,11 @@ const showToast = (msg: string) => {
         </div>
       )}
 
-      {/* Main Top Navigation Header */}
-      <NavigationHeader
-        currentUser={currentUser}
-        notifications={notifications}
-        onLogout={handleLogout}
-        onSwitchUser={handleSwitchUser}
-        allUsers={users}
-        viewMode={viewMode}
-        onToggleViewMode={() => {}}
-        onClearNotifications={handleClearNotifications}
-        onMarkNotificationRead={handleMarkNotifRead}
-      />
-
-      {/* Main Body Content Container */}
+            {/* Main Body Content Container */}
       <main className="flex-1 flex justify-center p-3 sm:p-5 md:p-8">
         
         <div className="w-full max-w-7xl mx-auto">
-            {currentUser.role === 'employee' ? (
-              <EmployeeDashboard
+            <EmployeeDashboard
                 user={currentUser}
                 shifts={shifts}
                 tasks={tasks}
@@ -567,40 +536,19 @@ const showToast = (msg: string) => {
                 onSubmitSwap={handleSubmitSwap}
                 onAcceptSwap={handleAcceptSwap}
                 onLogout={handleLogout}
-              />
-            ) : (
-              <ManagerDashboard
-                manager={currentUser}
-                shifts={shifts}
-                tasks={tasks}
-                swaps={swaps}
-                announcements={announcements}
-                allUsers={users}
                 onAddShift={handleAddShift}
                 onDeleteShift={handleDeleteShift}
                 onApproveSwap={handleApproveSwap}
                 onRejectSwap={handleRejectSwap}
-                onToggleTask={handleToggleTask}
                 onPostAnnouncement={handlePostAnnouncement}
                 onDeleteAnnouncement={handleDeleteAnnouncement}
               />
-            )}
           </div>
 
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-4 border-t border-[#e5e2e1] bg-[#fcf9f8] text-center text-xs text-[#827472]">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="font-['Montserrat'] font-bold text-[#271310]">CoffeeShift</span>
-            <span>• Hệ thống phân ca & quản lý nhân viên thông minh</span>
-          </div>
-          <p className="text-[11px]">
-            Chế độ đang dùng: <strong>{currentUser.role === 'manager' ? 'Quản lý cửa hàng (Manager)' : 'Nhân viên pha chế (Employee)'}</strong> ({currentUser.name})
-          </p>
-        </div>
-      </footer>
+      
 
     </div>
   );
