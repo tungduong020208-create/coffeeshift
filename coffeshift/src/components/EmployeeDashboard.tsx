@@ -2,6 +2,7 @@ import { Leaderboard } from './Leaderboard';
 import { Logo } from './Logo';
 import { Logo } from './Logo';
 import { Logo } from './Logo';
+import { Logo } from './Logo';
 import React, { useState, useEffect } from 'react';
 import { UserProfile, Shift, TaskItem, ShiftSwapRequest, StoreAnnouncement, TaskStatus, TASK_STATUS_CONFIG } from '../types';
 import { SalaryModal } from './modals/SalaryModal';
@@ -146,11 +147,11 @@ export const EmployeeDashboard: React.FC<Props> = ({
             { id: 'tasks', icon: 'task_alt', label: 'Công việc' },
             { id: 'checklists', icon: 'checklist_rtl', label: 'Giám sát' },
             { id: 'staff', icon: 'group', label: 'Nhân viên' },
-            { id: 'leaderboard', icon: 'leaderboard', label: 'Xếp hạng' },
+            { id: 'reports', icon: 'analytics', label: 'Reports' },
           ] : [
             { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
             { id: 'tasks', icon: 'task_alt', label: 'Tasks' },
-            { id: 'leaderboard', icon: 'leaderboard', label: 'Reports' },
+            { id: 'reports', icon: 'analytics', label: 'Reports' },
             { id: 'profile', icon: 'person', label: 'Profile' },
           ]).map(item => (
             <button key={item.id} type="button" onClick={() => setActiveNav(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${activeNav === item.id ? 'bg-[#ff8f00] text-white' : 'text-[#827472] hover:bg-white/10 hover:text-white'}`}>
@@ -466,6 +467,99 @@ export const EmployeeDashboard: React.FC<Props> = ({
             <Leaderboard allUsers={allUsers} currentUser={user} />
           </div>
         )}
+
+{activeNav === 'reports' && isManager && (
+  <div className="px-6 py-6 space-y-6 max-w-6xl">
+    <div className="flex items-center justify-between">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Báo cáo & Thống kê</h1>
+        <p className="text-sm text-gray-500">Tổng quan hiệu suất vận hành quán tuần qua</p>
+      </div>
+      <select className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#ff8f00]">
+        <option>Tuần này</option>
+        <option>Tháng này</option>
+      </select>
+    </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+        <p className="text-xs text-gray-500 uppercase font-semibold mb-2">Tổng điểm thi đua</p>
+        <p className="text-3xl font-bold text-gray-900">4,850</p>
+        <p className="text-xs text-emerald-600 mt-1">↗ +12% so với tuần trước</p>
+      </div>
+      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+        <p className="text-xs text-gray-500 uppercase font-semibold mb-2">Nhiệm vụ hoàn thành</p>
+        <p className="text-3xl font-bold text-gray-900">342</p>
+        <p className="text-xs text-gray-500 mt-1">Tỷ lệ đạt 92%</p>
+      </div>
+      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+        <p className="text-xs text-gray-500 uppercase font-semibold mb-2">Vi phạm nội quy</p>
+        <p className="text-3xl font-bold text-gray-900">15</p>
+        <p className="text-xs text-red-500 mt-1">↘ -3 ca vi phạm</p>
+      </div>
+      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+        <p className="text-xs text-gray-500 uppercase font-semibold mb-2">Giờ công phục vụ</p>
+        <p className="text-3xl font-bold text-gray-900">420h</p>
+        <p className="text-xs text-gray-500 mt-1">Bình quân 60h/ngày</p>
+      </div>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Hiệu suất nhiệm vụ theo ngày</h2>
+        <div className="h-48 flex items-end justify-between gap-2 px-4">
+          {[65,78,82,71,88,92,45].map((h,i) => (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <div className="w-full bg-[#ff8f00] rounded-t" style={{height:h+'%'}}></div>
+              <span className="text-xs text-gray-500">{['T2','T3','T4','T5','T6','T7','CN'][i]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Trạng thái công việc</h2>
+        <div className="flex flex-col items-center">
+          <div className="relative w-32 h-32 mb-4">
+            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" strokeWidth="20" />
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#ff8f00" strokeWidth="20" strokeDasharray="188.5 251.3" />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <p className="text-xl font-bold text-gray-900">342</p>
+              <p className="text-[10px] text-gray-500">nhiệm vụ</p>
+            </div>
+          </div>
+          <div className="space-y-2 w-full text-sm">
+            <div className="flex justify-between"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#ff8f00]"></div>Hoàn thành</div><span className="font-bold">75%</span></div>
+            <div className="flex justify-between"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500"></div>Quá hạn</div><span className="font-bold">15%</span></div>
+            <div className="flex justify-between"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-gray-400"></div>Vi phạm</div><span className="font-bold">10%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="p-5 border-b border-gray-100 flex items-center justify-between">
+        <h2 className="text-lg font-bold text-gray-900">Nhân viên xuất sắc tuần</h2>
+        <button type="button" className="text-sm text-[#ff8f00] font-medium hover:underline cursor-pointer">Xem tất cả →</button>
+      </div>
+      <table className="w-full">
+        <thead><tr className="text-left text-xs text-gray-500 uppercase border-b border-gray-100">
+          <th className="px-5 py-3">Hạng</th><th className="px-5 py-3">Nhân viên</th><th className="px-5 py-3">Vai trò</th><th className="px-5 py-3">Giờ làm</th><th className="px-5 py-3 text-right">Điểm</th>
+        </tr></thead>
+        <tbody>
+          {allUsers.filter(u=>u.role==='employee').sort((a,b)=>(b.points||0)-(a.points||0)).slice(0,3).map((emp,i)=>(
+            <tr key={emp.id} className="border-b border-gray-50 hover:bg-gray-50">
+              <td className="px-5 py-4"><span className={'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold '+(i===0?'bg-[#ff8f00] text-white':i===1?'bg-gray-200 text-gray-700':'bg-gray-100 text-gray-500')}>{i+1}</span></td>
+              <td className="px-5 py-4"><div className="flex items-center gap-3"><img src={emp.avatar} className="w-10 h-10 rounded-full object-cover"/><span className="font-semibold text-gray-900">{emp.name}</span></div></td>
+              <td className="px-5 py-4 text-sm text-gray-600">{emp.position}</td>
+              <td className="px-5 py-4 text-sm text-gray-600">{emp.hoursWorkedMonth}h</td>
+              <td className="px-5 py-4 text-right"><span className="font-bold text-[#ff8f00]">{emp.points||0}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)}
+
 
         {activeNav === 'profile' && !isManager && (
           <div className="px-4 py-4 space-y-4">
