@@ -135,11 +135,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
   return (
     <div className="min-h-screen bg-[#f6f3f2] flex relative">
       {/* Sidebar Navigation */}
-      <aside className="w-56 bg-[#271310] text-[#e4e4cc] flex flex-col py-4 px-2 sticky top-0 h-screen flex-shrink-0">
-        <div className="flex items-center gap-2 px-3 mb-6">
-          <Logo size={32} />
-          <span className="font-bold text-lg">CoffeeShift</span>
-        </div>
+      <aside className="w-56 bg-[#271310] text-[#e4e4cc] flex flex-col pt-2 pb-4 px-2 sticky top-0 h-screen flex-shrink-0">
         <nav className="flex-1 space-y-1">
           {(isManager ? [
             { id: 'dashboard', icon: 'dashboard', label: 'Trang chủ' },

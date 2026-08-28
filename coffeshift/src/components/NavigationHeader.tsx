@@ -33,7 +33,7 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
 
   return (
     <header className="w-full bg-[#271310] border-b border-[#3e2723] text-[#e4e4cc] sticky top-0 z-40 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-2">
+      <div className="px-4 py-2.5 flex items-center justify-between gap-2">
         {/* Brand & Logo */}
         <div className="flex items-center gap-3">
           <Logo size={36} />
@@ -46,9 +46,7 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
                 {currentUser.role === 'manager' ? 'Manager Portal' : 'Nhân viên App'}
               </span>
             </div>
-            <p className="text-[11px] text-[#e4e4cc]/70 hidden md:block leading-none mt-0.5">
-              {currentUser.branch}
-            </p>
+            
           </div>
         </div>
 
