@@ -1,6 +1,7 @@
 import { Leaderboard } from './Leaderboard';
 import { Logo } from './Logo';
 import { Logo } from './Logo';
+import { Logo } from './Logo';
 import React, { useState, useEffect } from 'react';
 import { UserProfile, Shift, TaskItem, ShiftSwapRequest, StoreAnnouncement, TaskStatus, TASK_STATUS_CONFIG } from '../types';
 import { SalaryModal } from './modals/SalaryModal';
