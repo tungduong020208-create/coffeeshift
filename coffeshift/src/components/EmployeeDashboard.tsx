@@ -1,8 +1,5 @@
 import { Leaderboard } from './Leaderboard';
 import { Logo } from './Logo';
-import { Logo } from './Logo';
-import { Logo } from './Logo';
-import { Logo } from './Logo';
 import React, { useState, useEffect } from 'react';
 import { UserProfile, Shift, TaskItem, ShiftSwapRequest, StoreAnnouncement, TaskStatus, TASK_STATUS_CONFIG } from '../types';
 import { SalaryModal } from './modals/SalaryModal';
@@ -11,6 +8,8 @@ import { ClockInModal } from './modals/ClockInModal';
 import { SwapShiftModal } from './modals/SwapShiftModal';
 import { AddShiftModal } from './modals/AddShiftModal';
 import { NewAnnouncementModal } from './modals/NewAnnouncementModal';
+import { EvidenceDetailModal } from './modals/EvidenceDetailModal';
+import { SubmitEvidenceModal } from './modals/SubmitEvidenceModal';
 
 type NavTab = 'dashboard' | 'tasks' | 'evidence' | 'handover' | 'leaderboard' | 'profile' | 'roster' | 'approvals' | 'checklists' | 'staff' | 'announcements';
 
@@ -48,6 +47,10 @@ export const EmployeeDashboard: React.FC<Props> = ({
   const isManager = user.role === 'manager';
   const [isSalaryOpen, setIsSalaryOpen] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [selectedEvidence, setSelectedEvidence] = useState<any>(null);
+  const [isEvidenceDetailOpen, setIsEvidenceDetailOpen] = useState(false);
+  const [submitTask, setSubmitTask] = useState<TaskItem | null>(null);
+  const [isSubmitEvidenceOpen, setIsSubmitEvidenceOpen] = useState(false);
   const [showNewNote, setShowNewNote] = useState(false);
   const [newNoteText, setNewNoteText] = useState("");
   const [newNotePriority, setNewNotePriority] = useState("normal");
@@ -119,11 +122,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
   const myEvidence = evidence.filter((e: any) => e.userId === user.id);
   const myHandovers = handovers.filter((h: any) => h != null && (h.fromUserId === user.id || h.toUserId === user.id));
 
-  const handleSubmitEvidence = (taskId: string) => {
-    onSubmitEvidence(taskId, 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=300', evidenceNote);
-    setSubmitEvidence(null);
-    setEvidenceNote('');
-  };
+  const openSubmitEvidence = (task: TaskItem) => { setSubmitTask(task); setIsSubmitEvidenceOpen(true); };
 
   const handleAddNote = (text: string, priority: string) => {
     const now = new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
@@ -136,9 +135,9 @@ export const EmployeeDashboard: React.FC<Props> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex relative">
+    <div className="h-full bg-gray-50 flex relative">
       {/* Sidebar Navigation */}
-      <aside className="w-56 bg-white border-r border-gray-200 flex flex-col pt-2 pb-4 px-2 sticky top-0 h-screen flex-shrink-0">
+      <aside className="w-56 bg-white border-r border-gray-200 flex flex-col pt-2 pb-4 px-2 flex-shrink-0 h-full">
         <nav className="flex-1 space-y-1">
           {(isManager ? [
             { id: 'dashboard', icon: 'dashboard', label: 'Trang chủ' },
@@ -213,7 +212,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
                       <div className="flex-1 min-w-0"><p className="font-semibold text-sm text-gray-900 truncate">{task.title}</p>
                         <div className="flex items-center gap-2 mt-0.5"><span className="text-xs text-gray-400 flex items-center gap-1"><span className="material-symbols-outlined text-sm">schedule</span>{task.scheduledTime}</span>
                           <span className="text-xs font-medium" style={{ color: s.color }}>{s.label}</span>{task.completedAt && (<span className="text-[10px] text-gray-400 flex items-center gap-1 mt-0.5"><span className="material-symbols-outlined text-[10px]">schedule</span>{task.completedAt}</span>)}{task.evidenceNote && (<span className="text-[10px] text-blue-500 flex items-center gap-1 mt-0.5"><span className="material-symbols-outlined text-[10px]">photo_camera</span>Đã chụp</span>)}{task.taskStatus === 'pending_review' && (<span className="text-[10px] text-blue-500 flex items-center gap-1 mt-0.5"><span className="material-symbols-outlined text-[10px]">pending</span>Chờ duyệt</span>)}</div></div>
-                      {task.taskStatus !== 'completed' && task.taskStatus !== 'pending_review' && (<button type="button" onClick={() => setSubmitEvidence(task.id)} className="p-2 rounded-lg hover:bg-orange-50 cursor-pointer border border-orange-200" title="Chup anh xac nhan"><span className="material-symbols-outlined text-[#ff8f00]">photo_camera</span></button>)}
+                      {task.taskStatus !== 'completed' && task.taskStatus !== 'pending_review' && (<button type="button" onClick={() => openSubmitEvidence(task)} className="p-2 rounded-lg hover:bg-orange-50 cursor-pointer border border-orange-200" title="Chup anh xac nhan"><span className="material-symbols-outlined text-[#ff8f00]">photo_camera</span></button>)}
                     </div>);
                 })}
               </div></div>
@@ -228,8 +227,8 @@ export const EmployeeDashboard: React.FC<Props> = ({
         <h1 className="font-bold text-xl text-gray-900">Công việc theo ca</h1>
       </div>
       
-      {['morning', 'mid', 'closing'].filter(st => st === currentShiftType).map(shiftType => {
-        const shiftTasks = currentShiftTasks.filter(t => t.shiftType === shiftType || t.shiftType === 'all');
+      {['morning', 'mid', 'closing'].map(shiftType => {
+        const shiftTasks = tasks.filter(t => t.shiftType === shiftType || t.shiftType === 'all');
         if (shiftTasks.length === 0) return null;
         const completedCount = shiftTasks.filter(t => t.taskStatus === 'completed').length;
         const progress = Math.round((completedCount / shiftTasks.length) * 100);
@@ -260,7 +259,7 @@ export const EmployeeDashboard: React.FC<Props> = ({
               {shiftTasks.sort((a, b) => (a.scheduledTime || '').localeCompare(b.scheduledTime || '')).map(task => {
                 const s = sc(task.taskStatus);
                 return (
-                  <div key={task.id} className="p-3 px-4 flex items-center gap-3 hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => { if (task.taskStatus !== 'completed' && task.taskStatus !== 'pending_review') setSubmitEvidence(task.id); }}>
+                  <div key={task.id} className="p-3 px-4 flex items-center gap-3 hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => { if (task.taskStatus !== 'completed' && task.taskStatus !== 'pending_review') openSubmitEvidence(task); }}>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: s.bgColor }}>
                       <span className="material-symbols-outlined text-lg" style={{ color: s.color }}>{s.icon}</span>
                     </div>
@@ -313,6 +312,50 @@ export const EmployeeDashboard: React.FC<Props> = ({
                       </div>
                       <p className="text-sm text-gray-900 font-medium">{ev.note}</p>
                       {ev.reviewedBy && <p className="text-xs text-gray-400 mt-1">Duyệt bởi: {ev.reviewedBy}</p>}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        
+        {activeNav === 'checklists' && isManager && (
+          <div className="px-4 py-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="material-symbols-outlined text-[#ff8f00] text-xl">checklist_rtl</span>
+              <h1 className="font-bold text-xl text-gray-900">Giám sát Bằng chứng</h1>
+            </div>
+            <p className="text-xs text-gray-500">Xem và duyệt bằng chứng nhân viên đã nộp</p>
+            {evidence.length === 0 ? (
+              <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 text-center">
+                <span className="material-symbols-outlined text-gray-300 text-5xl mb-3">photo_library</span>
+                <p className="text-sm text-gray-500 font-medium">Chưa có bằng chứng nào</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {evidence.map(ev => {
+                  const evStatus = ev.status === 'approved' ? { label: 'Đã duyệt', color: '#10b981', bg: '#d1fae5' }
+                    : ev.status === 'rejected' ? { label: 'Bị từ chối', color: '#dc2626', bg: '#fef2f2' }
+                    : { label: 'Chờ duyệt', color: '#2563eb', bg: '#eff6ff' };
+                  return (
+                    <div key={ev.id} className="bg-white rounded-xl border border-gray-200 p-3.5 hover:shadow-sm transition-all cursor-pointer"
+                      onClick={() => { setSelectedEvidence(ev); setIsEvidenceDetailOpen(true); }}>
+                      <div className="flex items-center gap-3">
+                        <img src={ev.imageUrl} alt="Evidence" className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-2">
+                              <img src={ev.userAvatar} className="w-6 h-6 rounded-full object-cover" />
+                              <span className="text-xs font-semibold text-gray-700">{ev.userName}</span>
+                            </div>
+                            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full" style={{ color: evStatus.color, backgroundColor: evStatus.bg }}>{evStatus.label}</span>
+                          </div>
+                          <p className="text-sm text-gray-800 font-medium truncate">{ev.note}</p>
+                          <p className="text-[11px] text-gray-400 mt-0.5">{ev.submittedAt}</p>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
@@ -595,6 +638,8 @@ export const EmployeeDashboard: React.FC<Props> = ({
       {isManager && <NewAnnouncementModal currentUser={user} isOpen={isNewAnnoOpen} onClose={()=>setIsNewAnnoOpen(false)} onPostAnnouncement={onPostAnnouncement!} />}
       <ClockInModal shift={todayShift} user={user} isOpen={isClockInOpen} onClose={() => setIsClockInOpen(false)} onConfirmClockIn={onClockIn} onConfirmClockOut={onClockOut} />
       <ClockInModal shift={todayShift} user={user} isOpen={isClockOutOpen} onClose={() => setIsClockOutOpen(false)} onConfirmClockIn={onClockIn} onConfirmClockOut={onClockOut} isClockingOut={true} />
+      <SubmitEvidenceModal task={submitTask} isOpen={isSubmitEvidenceOpen} onClose={() => setIsSubmitEvidenceOpen(false)} onSubmit={onSubmitEvidence} />
+      <EvidenceDetailModal evidence={selectedEvidence} isOpen={isEvidenceDetailOpen} onClose={() => setIsEvidenceDetailOpen(false)} onApprove={onApproveEvidence} onReject={onRejectEvidence} />
       <SwapShiftModal userShifts={userShifts} allUsers={allUsers} currentUserId={user.id} isOpen={isSwapOpen} onClose={() => setIsSwapOpen(false)} onSubmitSwap={onSubmitSwap} />
     </div>
   );

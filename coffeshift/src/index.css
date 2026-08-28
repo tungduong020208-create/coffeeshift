@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-headline: 'Montserrat', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-headline {
+    font-family: var(--font-headline);
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.material-symbols-filled {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(130, 116, 114, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(130, 116, 114, 0.5);
+}
+
+
+/* Hide stray text nodes in root container */
+#root > div > span[style] { display: none !important; }
+
+
+/* Collapse stray text nodes in root flex container */
+#root > div {
+  line-height: 0;
+}
+#root > div > * {
+  line-height: 1.5;
+}

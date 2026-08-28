@@ -479,9 +479,7 @@ const showToast = (msg: string) => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f3f2] text-[#1b1c1c] flex flex-col antialiased">
-
-      {/* Navigation Header with logout */}
+    <div className="h-screen bg-[#f6f3f2] text-[#1b1c1c] flex flex-col antialiased overflow-hidden">
       <NavigationHeader
         currentUser={currentUser}
         notifications={notifications}
@@ -497,11 +495,8 @@ const showToast = (msg: string) => {
           <span className="w-2 h-2 rounded-full bg-[#ff8f00]"></span>
           <span>{toastMessage}</span>
         </div>
-      )}
-
-            {/* Main Body Content Container */}
-      <main className="flex-1">
-        <div className="w-full">
+      )}<main className="flex-1 flex flex-col overflow-hidden">
+        <div className="w-full flex-1 flex flex-col">
             <EmployeeDashboard
                 user={currentUser}
                 shifts={shifts}
@@ -528,11 +523,6 @@ const showToast = (msg: string) => {
               />
           </div>
 
-      </main>
-
-      {/* Footer */}
-      
-
-    </div>
+      </main></div>
   );
 }

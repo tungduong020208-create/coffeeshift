@@ -150,5 +150,41 @@ export const INITIAL_ANNOUNCEMENTS: StoreAnnouncement[] = [
 ];
 
 export const INITIAL_NOTIFICATIONS: AppNotification[] = [];
-export const INITIAL_EVIDENCE: TaskEvidence[] = [];
+export const INITIAL_EVIDENCE: TaskEvidence[] = [
+  {
+    id: 'ev-1',
+    taskId: 'task-1',
+    userId: 'emp-1',
+    userName: 'Nguyễn Văn B',
+    userAvatar: 'https://ui-avatars.com/api/?name=NVB&background=8B7355&color=fff&bold=true',
+    imageUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600',
+    note: 'Dọn dẹp quầy Bar cuối ca sáng. Quầy đã được dọn sạch, máy pha cà phê đã được xả nước và lau chùi. Vui lòng kiểm tra.',
+    submittedAt: '14:30',
+    status: 'pending_review',
+  },
+  {
+    id: 'ev-2',
+    taskId: 'task-5',
+    userId: 'emp-2',
+    userName: 'Trần Thị C',
+    userAvatar: 'https://ui-avatars.com/api/?name=TTC&background=D4A574&color=fff&bold=true',
+    imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600',
+    note: 'Vệ sinh WC ca trưa hoàn tất. Giấy vệ sinh đã bổ sung, sàn nhà sạch sẽ.',
+    submittedAt: '13:15',
+    status: 'pending_review',
+  },
+  {
+    id: 'ev-3',
+    taskId: 'task-8',
+    userId: 'emp-1',
+    userName: 'Nguyễn Văn B',
+    userAvatar: 'https://ui-avatars.com/api/?name=NVB&background=8B7355&color=fff&bold=true',
+    imageUrl: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=600',
+    note: 'Đóng cửa hàng ca tối. Tắt hết đèn, máy móc, kéo cửa an toàn.',
+    submittedAt: '22:10',
+    status: 'approved',
+    reviewedBy: 'Quản lý cửa hàng',
+    reviewedAt: '22:30',
+  },
+];
 export const INITIAL_HANDOVERS: ShiftHandover[] = [];
