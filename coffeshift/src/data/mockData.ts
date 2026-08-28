@@ -103,18 +103,18 @@ export const INITIAL_SHIFTS: Shift[] = [
 // Cong viec checklist mau
 export const INITIAL_TASKS: TaskItem[] = [
   // Ca Sang
-  { id: 'task-1', title: 'Mở cửa hàng', category: 'opening', shiftType: 'morning', completed: false, scheduledTime: '06:30', taskStatus: 'not_started', description: 'Kiểm tra cửa, bật đèn, nhạc' },
-  { id: 'task-2', title: 'Calibrate máy espresso', category: 'espresso_calibration', shiftType: 'morning', completed: false, scheduledTime: '06:45', taskStatus: 'not_started', description: 'Test shot, điều chỉnh grind' },
-  { id: 'task-3', title: 'Kiểm tra tồn kho nguyên liệu', category: 'opening', shiftType: 'morning', completed: false, scheduledTime: '07:00', taskStatus: 'not_started', description: 'Sữa,咖啡, syrup, cốc' },
-  { id: 'task-4', title: 'Làm sạch group head', category: 'hygiene', shiftType: 'morning', completed: false, scheduledTime: '07:15', taskStatus: 'not_started' },
+  { id: 'task-1', title: 'Mở cửa hàng', category: 'opening', shiftType: 'morning', completed: false, scheduledTime: '06:30', taskStatus: 'not_started', description: 'Kiểm tra cửa, bật đèn, nhạc', durationMin: 30, points: 5 },
+  { id: 'task-2', title: 'Calibrate máy espresso', category: 'espresso_calibration', shiftType: 'morning', completed: false, scheduledTime: '06:45', taskStatus: 'not_started', description: 'Test shot, điều chỉnh grind', durationMin: 20, points: 5 },
+  { id: 'task-3', title: 'Kiểm tra tồn kho nguyên liệu', category: 'opening', shiftType: 'morning', completed: false, scheduledTime: '07:00', taskStatus: 'not_started', description: 'Sữa, cà phê, syrup, cốc', durationMin: 15, points: 2 },
+  { id: 'task-4', title: 'Làm sạch group head', category: 'hygiene', shiftType: 'morning', completed: false, scheduledTime: '07:15', taskStatus: 'not_started', durationMin: 15, points: 3 },
   // Ca Trua
-  { id: 'task-5', title: 'Duy trì vệ sinh quầy', category: 'midshift', shiftType: 'mid', completed: false, scheduledTime: '12:00', taskStatus: 'not_started' },
-  { id: 'task-6', title: 'Vệ sinh WC', category: 'hygiene', shiftType: 'mid', completed: false, scheduledTime: '13:00', taskStatus: 'not_started', description: 'Kiểm tra nước, giấy, mùi' },
-  { id: 'task-7', title: 'Bổ sung nguyên liệu', category: 'midshift', shiftType: 'mid', completed: false, scheduledTime: '14:00', taskStatus: 'not_started' },
+  { id: 'task-5', title: 'Duy trì vệ sinh quầy', category: 'midshift', shiftType: 'mid', completed: false, scheduledTime: '12:00', taskStatus: 'not_started', durationMin: 20, points: 3 },
+  { id: 'task-6', title: 'Vệ sinh WC', category: 'hygiene', shiftType: 'mid', completed: false, scheduledTime: '13:00', taskStatus: 'not_started', description: 'Kiểm tra nước, giấy, mùi', durationMin: 60, points: 10 },
+  { id: 'task-7', title: 'Bổ sung nguyên liệu', category: 'midshift', shiftType: 'mid', completed: false, scheduledTime: '14:00', taskStatus: 'not_started', durationMin: 45, points: 8 },
   // Ca Toi
-  { id: 'task-8', title: 'Đóng cửa hàng', category: 'closing', shiftType: 'closing', completed: false, scheduledTime: '22:00', taskStatus: 'not_started', description: 'Tắt đèn, máy, kéo cửa' },
-  { id: 'task-9', title: 'Kiểm kê tiền', category: 'closing', shiftType: 'closing', completed: false, scheduledTime: '22:15', taskStatus: 'not_started', description: 'Đếm tiền mặt, đối chiếu POS' },
-  { id: 'task-10', title: 'Vệ sinh cuối ngày', category: 'closing', shiftType: 'closing', completed: false, scheduledTime: '22:30', taskStatus: 'not_started', description: 'Rửa dụng cụ, lau bàn' },
+  { id: 'task-8', title: 'Đóng cửa hàng', category: 'closing', shiftType: 'closing', completed: false, scheduledTime: '22:00', taskStatus: 'not_started', description: 'Tắt đèn, máy, kéo cửa', durationMin: 30, points: 5 },
+  { id: 'task-9', title: 'Kiểm kê tiền', category: 'closing', shiftType: 'closing', completed: false, scheduledTime: '22:15', taskStatus: 'not_started', description: 'Đếm tiền mặt, đối chiếu POS', durationMin: 30, points: 8 },
+  { id: 'task-10', title: 'Vệ sinh cuối ngày', category: 'closing', shiftType: 'closing', completed: false, scheduledTime: '22:30', taskStatus: 'not_started', description: 'Rửa dụng cụ, lau bàn', durationMin: 30, points: 5 },
 ];
 
 // Yeu cau doi ca mau

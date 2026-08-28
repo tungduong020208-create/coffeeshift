@@ -496,7 +496,7 @@ const showToast = (msg: string) => {
           <span>{toastMessage}</span>
         </div>
       )}<main className="flex-1 flex flex-col overflow-hidden">
-        <div className="w-full flex-1 flex flex-col">
+        <div className="w-full flex-1 flex flex-col min-h-0">
             <EmployeeDashboard
                 user={currentUser}
                 shifts={shifts}

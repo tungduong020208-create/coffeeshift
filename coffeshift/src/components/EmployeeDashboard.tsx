@@ -605,29 +605,62 @@ export const EmployeeDashboard: React.FC<Props> = ({
 
 
         {activeNav === 'profile' && !isManager && (
-          <div className="px-4 py-4 space-y-4">
-            <div className="flex flex-col items-center text-center">
-              <img src={user.avatar} alt={user.name} className="w-20 h-20 rounded-full object-cover border-3 border-[#ff8f00] mb-3" />
-              <h1 className="font-bold text-xl text-gray-900">{user.name}</h1>
-              <p className="text-sm text-gray-500">{user.position}</p>
-              <div className="bg-[#ff8f00] text-white px-4 py-1.5 rounded-full text-sm font-bold mt-2 flex items-center gap-1">
-                <span className="material-symbols-outlined text-sm">star</span>
-                {user.points || 0} Điểm
+          <div className="px-6 py-6 space-y-6 max-w-3xl">
+            <h1 className="text-2xl font-bold text-gray-900">Hồ sở cá nhân</h1>
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 flex items-center gap-5 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-100 to-orange-50 rounded-bl-full opacity-60" />
+              <div className="relative">
+                <img src={user.avatar} alt={user.name} className="w-20 h-20 rounded-full object-cover border-3 border-white shadow-md" />
+                <button type="button" className="absolute -bottom-1 -right-1 w-7 h-7 bg-white rounded-full border border-gray-200 flex items-center justify-center shadow-sm cursor-pointer">
+                  <span className="material-symbols-outlined text-gray-500 text-sm">photo_camera</span>
+                </button>
+              </div>
+              <div className="flex-1 relative z-10">
+                <h2 className="font-bold text-lg text-gray-900">{user.name}</h2>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="material-symbols-outlined text-gray-400 text-sm">work</span>
+                  <span className="text-sm text-gray-500">{user.position}</span>
+                </div>
+              </div>
+              <button type="button" className="px-4 py-2 bg-[#ff8f00] text-white text-sm font-semibold rounded-xl hover:bg-[#e67e00] transition-colors cursor-pointer flex items-center gap-1.5 relative z-10">
+                <span className="material-symbols-outlined text-sm">edit</span>
+                Chỉnh sửa
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-white rounded-2xl border border-gray-200 p-4 text-center shadow-sm">
+                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2"><span className="material-symbols-outlined text-[#ff8f00] text-xl">star</span></div>
+                <p className="text-xs text-gray-500 mb-0.5">Tổng điểm</p>
+                <p className="font-bold text-xl text-gray-900">{user.points || 0}</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-200 p-4 text-center shadow-sm">
+                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2"><span className="material-symbols-outlined text-[#ff8f00] text-xl">emoji_events</span></div>
+                <p className="text-xs text-gray-500 mb-0.5">Hàng</p>
+                <p className="font-bold text-xl text-gray-900">Top {allUsers.filter(u => u.role === 'employee').sort((a, b) => (b.points || 0) - (a.points || 0)).findIndex(u => u.id === user.id) + 1 || 5}</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-200 p-4 text-center shadow-sm">
+                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2"><span className="material-symbols-outlined text-[#ff8f00] text-xl">schedule</span></div>
+                <p className="text-xs text-gray-500 mb-0.5">Thâm niên</p>
+                <p className="font-bold text-xl text-gray-900">{Math.floor(user.hoursWorkedMonth / 160) || 1} năm</p>
               </div>
             </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-              <div className="flex justify-between"><span className="text-sm text-gray-500">Email</span><span className="text-sm text-gray-900">{user.email}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-gray-500">Số điện thoại</span><span className="text-sm text-gray-900">{user.phone}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-gray-500">Chi nhánh</span><span className="text-sm text-gray-900 text-right max-w-[200px]">{user.branch}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-gray-500">Giờ làm/tháng</span><span className="text-sm text-gray-900">{user.hoursWorkedMonth}h</span></div>
-              <div className="flex justify-between"><span className="text-sm text-gray-500">Chăm chỉ</span><span className="text-sm text-gray-900">{user.punctualityScore}%</span></div>
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+              {[{icon:'person',label:'Thông tin cá nhân'},{icon:'history',label:'Lịch sử làm việc'},{icon:'lock',label:'Đổi mật khẩu'},{icon:'notifications',label:'Cài đặt thông báo'},{icon:'help',label:'Trợ giúp'}].map((item, idx) => (
+                <button key={idx} type="button" className="w-full flex items-center gap-3 px-5 py-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer">
+                  <span className="material-symbols-outlined text-gray-400 text-xl">{item.icon}</span>
+                  <span className="flex-1 text-left text-sm font-medium text-gray-800">{item.label}</span>
+                  <span className="material-symbols-outlined text-gray-300 text-lg">chevron_right</span>
+                </button>
+              ))}
             </div>
-            <button type="button" onClick={onLogout} className="w-full py-3 bg-red-50 text-red-600 font-bold text-sm rounded-xl cursor-pointer border border-red-200">
-              Đăng xuất
-            </button>
+            <div className="flex justify-end">
+              <button type="button" onClick={onLogout} className="flex items-center gap-2 px-5 py-2.5 text-red-500 font-semibold text-sm hover:bg-red-50 rounded-xl transition-colors cursor-pointer border border-red-200">
+                <span className="material-symbols-outlined text-lg">logout</span>
+                Đăng xuất
+              </button>
+            </div>
           </div>
         )}
-
       </div>
 
       <button type="button" onClick={() => setIsSwapOpen(true)} className="fixed bottom-8 right-8 w-14 h-14 bg-[#ff8f00] text-white rounded-full shadow-lg flex items-center justify-center z-30 cursor-pointer hover:bg-[#e67e00] transition-colors"><span className="material-symbols-outlined text-2xl">handshake</span></button>
