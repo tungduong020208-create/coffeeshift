@@ -1,5 +1,6 @@
 import { Leaderboard } from './Leaderboard';
 import { Logo } from './Logo';
+import { Logo } from './Logo';
 import React, { useState, useEffect } from 'react';
 import { UserProfile, Shift, TaskItem, ShiftSwapRequest, StoreAnnouncement, TaskStatus, TASK_STATUS_CONFIG } from '../types';
 import { SalaryModal } from './modals/SalaryModal';
@@ -133,9 +134,9 @@ export const EmployeeDashboard: React.FC<Props> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f3f2] flex relative">
+    <div className="min-h-screen bg-gray-50 flex relative">
       {/* Sidebar Navigation */}
-      <aside className="w-56 bg-[#271310] text-[#e4e4cc] flex flex-col pt-2 pb-4 px-2 sticky top-0 h-screen flex-shrink-0">
+      <aside className="w-56 bg-white border-r border-gray-200 flex flex-col pt-2 pb-4 px-2 sticky top-0 h-screen flex-shrink-0">
         <nav className="flex-1 space-y-1">
           {(isManager ? [
             { id: 'dashboard', icon: 'dashboard', label: 'Trang chủ' },
@@ -146,12 +147,10 @@ export const EmployeeDashboard: React.FC<Props> = ({
             { id: 'staff', icon: 'group', label: 'Nhân viên' },
             { id: 'leaderboard', icon: 'leaderboard', label: 'Xếp hạng' },
           ] : [
-            { id: 'dashboard', icon: 'dashboard', label: 'Trang chủ' },
-            { id: 'tasks', icon: 'task_alt', label: 'Công việc' },
-            { id: 'evidence', icon: 'photo_camera', label: 'Bằng chứng' },
-            { id: 'handover', icon: 'swap_horiz', label: 'Bàn giao' },
-            { id: 'leaderboard', icon: 'leaderboard', label: 'Xếp hạng' },
-            { id: 'profile', icon: 'person', label: 'Cá nhân' },
+            { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
+            { id: 'tasks', icon: 'task_alt', label: 'Tasks' },
+            { id: 'leaderboard', icon: 'leaderboard', label: 'Reports' },
+            { id: 'profile', icon: 'person', label: 'Profile' },
           ]).map(item => (
             <button key={item.id} type="button" onClick={() => setActiveNav(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${activeNav === item.id ? 'bg-[#ff8f00] text-white' : 'text-[#827472] hover:bg-white/10 hover:text-white'}`}>
               <span className="material-symbols-outlined text-lg">{item.icon}</span>
@@ -160,12 +159,12 @@ export const EmployeeDashboard: React.FC<Props> = ({
           ))}
         </nav>
         {!isManager && (
-          <div className="border-t border-[#3e2723] pt-3 mt-3 px-3">
+          <div className="border-t border-gray-200 pt-3 mt-3 px-3">
             <div className="flex items-center gap-2">
               <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover border border-[#ff8f00]" />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold truncate text-[#e4e4cc]">{user.name}</p>
-                <p className="text-[10px] text-[#827472]">{user.points || 0} Điểm</p>
+                <p className="text-xs font-semibold truncate text-gray-900">{user.name}</p>
+                <p className="text-[10px] text-gray-500">{user.points || 0} Điểm</p>
               </div>
             </div>
           </div>
