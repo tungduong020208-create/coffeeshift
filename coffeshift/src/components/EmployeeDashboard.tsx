@@ -219,70 +219,59 @@ export const EmployeeDashboard: React.FC<Props> = ({
           </div>
         )}
 
-        {
-  activeNav === 'tasks' && (
-    <div className="px-4 py-4 space-y-5">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="material-symbols-outlined text-[#ff8f00] text-xl">task_alt</span>
-        <h1 className="font-bold text-xl text-gray-900">Công việc theo ca</h1>
+        {activeNav === 'tasks' && (
+    <div className="px-4 py-4 space-y-4">
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <h1 className="font-bold text-2xl text-gray-900">Task Management</h1>
+          <p className="text-sm text-gray-500">Manage and assign tasks across different shifts.</p>
+        </div>
+        {isManager && (
+          <button type="button" className="flex items-center gap-2 bg-[#ff8f00] hover:bg-[#e68000] text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer">
+            <span className="material-symbols-outlined text-lg">add</span>New Task
+          </button>
+        )}
       </div>
-      
-      {['morning', 'mid', 'closing'].map(shiftType => {
-        const shiftTasks = tasks.filter(t => t.shiftType === shiftType || t.shiftType === 'all');
-        if (shiftTasks.length === 0) return null;
-        const completedCount = shiftTasks.filter(t => t.taskStatus === 'completed').length;
-        const progress = Math.round((completedCount / shiftTasks.length) * 100);
-        const shiftInfo = {
-          morning: { name: 'Ca Sáng', icon: 'wb_sunny', color: '#ff8f00', bgColor: '#fff7ed', time: '06:30 - 11:30' },
-          mid: { name: 'Ca Trưa', icon: 'wb_twilight', color: '#d97706', bgColor: '#fffbeb', time: '11:30 - 16:30' },
-          closing: { name: 'Ca Tối', icon: 'dark_mode', color: '#374151', bgColor: '#f3f4f6', time: '17:30 - 22:30' }
-        };
-        const info = shiftInfo[shiftType];
-        return (
-          <div key={shiftType} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-            <div className="p-4 border-b border-gray-100" style={{ backgroundColor: info.bgColor }}>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined" style={{ color: info.color }}>{info.icon}</span>
-                  <h3 className="font-bold text-base" style={{ color: info.color }}>{info.name}</h3>
-                </div>
-                <span className="text-xs text-gray-500">{info.time}</span>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          { type: 'morning', name: 'Morning Shift', icon: 'wb_sunny', color: '#ff8f00', time: '06:00 - 11:30' },
+          { type: 'mid', name: 'Mid Shift', icon: 'wb_twilight', color: '#d97706', time: '11:30 - 16:30' },
+          { type: 'closing', name: 'Closing Shift', icon: 'dark_mode', color: '#374151', time: '17:00 - 22:30' }
+        ].map(shift => {
+          const shiftTasks = tasks.filter(t => t.shiftType === shift.type || t.shiftType === 'all');
+          return (
+            <div key={shift.type} className="flex flex-col">
+              <div className="flex items-center gap-2 mb-3 px-1">
+                <span className="material-symbols-outlined text-xl" style={{ color: shift.color }}>{shift.icon}</span>
+                <h3 className="font-bold text-base text-gray-900">{shift.name}</h3>
+                <span className="ml-auto text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: shift.color + '20', color: shift.color }}>{shift.time}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-1.5 bg-white/50 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{ width: progress + '%', backgroundColor: info.color }} />
-                </div>
-                <span className="text-xs font-medium" style={{ color: info.color }}>{completedCount}/{shiftTasks.length}</span>
-              </div>
-            </div>
-            <div className="divide-y divide-gray-100">
-              {shiftTasks.sort((a, b) => (a.scheduledTime || '').localeCompare(b.scheduledTime || '')).map(task => {
-                const s = sc(task.taskStatus);
-                return (
-                  <div key={task.id} className="p-3 px-4 flex items-center gap-3 hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => { if (task.taskStatus !== 'completed' && task.taskStatus !== 'pending_review') openSubmitEvidence(task); }}>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: s.bgColor }}>
-                      <span className="material-symbols-outlined text-lg" style={{ color: s.color }}>{s.icon}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{task.title}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[11px] text-gray-400 flex items-center gap-0.5">
-                          <span className="material-symbols-outlined text-[12px]">schedule</span>{task.scheduledTime}
-                        </span>
-                        <span className="text-[11px] font-medium" style={{ color: s.color }}>{s.label}</span>
-                        {task.capturedAt && <span className="text-[11px] text-gray-400">📸 {task.capturedAt}</span>}
+              <div className="space-y-2.5">
+                {shiftTasks.map(task => (
+                  <div key={task.id} className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all cursor-pointer" onClick={() => { if (task.taskStatus !== 'completed' && task.taskStatus !== 'pending_review') openSubmitEvidence(task); }}>
+                    <p className="font-bold text-sm text-gray-900 mb-2">{task.title}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-gray-400 text-base">schedule</span>
+                        <span className="text-xs text-gray-500">{task.durationMin || 30} min</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span style={{color: shift.color}}>&#9733;</span>
+                        <span className="text-xs font-semibold" style={{color: shift.color}}>+{task.points || 5} pts</span>
                       </div>
                     </div>
-                    {task.taskStatus === 'completed' && <span className="material-symbols-outlined text-green-500">check_circle</span>}
-                    {task.taskStatus !== 'completed' && task.taskStatus !== 'pending_review' && <span className="material-symbols-outlined text-orange-400">photo_camera</span>}
-                    {task.taskStatus === 'pending_review' && <span className="material-symbols-outlined text-blue-400">pending</span>}
                   </div>
-                );
-              })}
+                ))}
+                {shiftTasks.length === 0 && (
+                  <div className="bg-gray-50 rounded-xl border border-dashed border-gray-300 p-6 text-center">
+                    <p className="text-sm text-gray-400">No tasks assigned</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   )
 }
